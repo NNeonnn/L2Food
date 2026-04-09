@@ -3,6 +3,7 @@
 from flask import render_template, request, redirect, url_for, send_file, session
 from subscript.filework import *
 from subscript.account_system import *
+from subscript.password_hashing import *
 from random import randint
 
 def choose():
@@ -14,10 +15,12 @@ def login():
         return redirect(url_for('profile'), 302)
     if (request.method == 'POST'):
         data = request.form.to_dict(flat=False)
-        input_email = data['email'][0]
-        if len(data['email']) > 0 and getuser(data['email'][0]) != False and data['password'][0] == getuser(data['email'][0])['password']:
-            setlogin(input_email)
-            return redirect(url_for('profile'), 302)
+        if len(data['email']) > 0 and len(data['password']) > 0:
+            input_email = data['email'][0]
+            input_password = data['password'][0]
+            if getuser(input_email) != False and verify_password(getuser(input_email)['password'], input_password):
+                setlogin(input_email)
+                return redirect(url_for('profile'), 302)
         else:
             return render_template('login.html', wrong=True, **commonkwargs(email))
     return render_template('login.html', wrong=False, **commonkwargs(email))
@@ -30,7 +33,7 @@ def register():
         data = request.form.to_dict(flat=False)
         # Добавляем поле 'cart': [] при регистрации
         session['temp_email'] = data['email'][0]
-        session['temp_password'] = data['password'][0]
+        session['temp_password'] = hash_password(data['password'][0])
         session['temp_last_name'] = data.get('last_name', [''])[0].strip()
         session['temp_first_name'] = data.get('first_name', [''])[0].strip()
         session['temp_middle_name'] = data.get('middle_name', [''])[0].strip()
@@ -81,7 +84,8 @@ def confirm_mail(): # for registration
             'to_take': [],
             'history': []
         })
-        session['temp_password'] = False
+        # session['temp_password'] = False
+        session['temp_password'] = ""
         email = session['temp_email']
         setlogin(email)
         return redirect(url_for('profile'), 302)
