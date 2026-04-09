@@ -12,15 +12,39 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/common/icon.png') }}">
+    <style>
+        /* Фиксируем овальную форму при открытии меню */
+        .navbar-floating {
+            border-radius: 60px !important;
+            transition: all 0.3s ease;
+        }
+        
+        /* Когда меню открыто, сохраняем овал */
+        .navbar-collapse.show,
+        .navbar-collapse.collapsing {
+            border-radius: 60px !important;
+        }
+        
+        /* Для мобильной версии добавляем отступы внутри меню */
+        @media (max-width: 991.98px) {
+            .navbar-collapse {
+                padding: 1rem 0;
+            }
+            
+            #navContent.show,
+            #navContent.collapsing {
+                padding-bottom: 1.5rem;
+            }
+        }
+    </style>
 </head>
 
 <body style="min-height: 100vh; margin: 0; display: flex; flex-direction: column;">
 
     <!-- Навигация (Обычная, НЕ фиксированная) -->
-    <!-- Навигация (Обычная, НЕ фиксированная) -->
     <header class="container pt-3 mb-4">
-        <nav class="navbar navbar-expand-lg navbar-floating w-100 mx-auto" id="two">
-            <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-floating w-100 mx-auto" style="border-radius: 60px; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+            <div class="container-fluid py-2 py-lg-0">
 
                 <!-- Логотип - теперь кликабельный -->
                 <a href="{{ url_for('landing') }}" class="navbar-brand fw-bold d-flex align-items-center gap-2 text-decoration-none text-dark">
@@ -29,7 +53,7 @@
                 </a>
 
                 <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navContent">
+                        data-bs-target="#navContent" aria-controls="navContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
@@ -61,9 +85,36 @@
                                                 href="{{ url_for('pricing') }}">Абонементы</a></li>
                         {% endif %}
                     </ul>
+
+                    <!-- Мобильный блок: Вход / Регистрация / Профиль (виден только на < lg) -->
+                    <div class="d-lg-none mt-3 pt-3 border-top">
+                        {% if username == "Log in" %}
+                        <div class="d-grid gap-2 px-3">
+                            <a href="{{ url_for('choose') }}" class="btn btn-outline-secondary btn-pill">Войти</a>
+                            <a href="{{ url_for('register') }}" class="btn btn-primary btn-pill">Регистрация</a>
+                        </div>
+                        {% else %}
+                        <a href="{{ url_for('profile') }}"
+                           class="d-flex align-items-center text-decoration-none text-dark gap-3 p-3">
+                            <img src="{{ url_for('static', filename=userimg) }}" alt="User"
+                                 class="rounded-circle border bg-light"
+                                 style="width: 48px; height: 48px; object-fit: cover;">
+                            <div>
+                                <div class="fw-bold">
+                                    {% if username|length > 25 %}
+                                        {{ username[:25] }}...
+                                    {% else %}
+                                        {{ username }}
+                                    {% endif %}
+                                </div>
+                                <small class="text-muted">Перейти в профиль</small>
+                            </div>
+                        </a>
+                        {% endif %}
+                    </div>
                 </div>
 
-                <!-- Правая часть -->
+                <!-- Правая часть (видна только на ≥ lg) -->
                 <div class="d-none d-lg-flex align-items-center gap-2">
                     {% if username == "Log in" %}
                     <a href="{{ url_for('choose') }}"
@@ -88,9 +139,7 @@
         </nav>
     </header>
 
-    <!-- Убрали navbar-spacer, так как шапка теперь занимает место в потоке -->
-
-    <main style="flex: 1;" id="one">
+    <main style="flex: 1;">
         {% block content %}{% endblock %}
     </main>
 
@@ -128,15 +177,5 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     {% block scripts %}{% endblock %}
 </body>
-
-<script>
-    function setWidth() {
-        var one = document.getElementById("one");
-        var two = document.getElementById("two");
-        style = window.getComputedStyle(one);
-        wdt = style.getPropertyValue('width');
-        two.style.width = wdt;
-    }
-</script>
 
 </html>
