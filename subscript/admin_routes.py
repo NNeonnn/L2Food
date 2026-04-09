@@ -8,7 +8,7 @@ from subscript.reports import *
 def set_admin_query():
     email = getlogin()
     user = getuser(email)
-    if email == 'placeholder' or user['rights'] != 3:
+    if email == 'placeholder' or user['rights'] != 2:
         return redirect(url_for('login'))
     data = request.form.to_dict(flat=False)
     qu = getquerylist("povar_to_admin.json")
@@ -86,7 +86,7 @@ def download_product_report():
 def approve_balance_req(id):
     email = getlogin()
     user = getuser(email)
-    if email == 'placeholder' or user['rights'] != 3:
+    if email == 'placeholder' or user['rights'] != 2:
         return redirect(url_for('login'))
     qu = getquerylist("payment.json")
     id = int(id)
@@ -101,7 +101,7 @@ def approve_balance_req(id):
 def decline_balance_req(id):
     email = getlogin()
     user = getuser(email)
-    if email == 'placeholder' or user['rights'] != 3:
+    if email == 'placeholder' or user['rights'] != 2:
         return redirect(url_for('login'))
     qu = getquerylist("payment.json")
     id = int(id)

@@ -25,9 +25,6 @@
                     <a class="nav-link" href="#bought" data-section="bought">
                         <i class="bi bi-cart"></i> История покупок
                     </a>
-                    <a class="nav-link" href="#abonement" data-section="abonement">
-                        <i class="bi bi-credit-card"></i> Абонемент
-                    </a>
                     <a class="nav-link" href="#health" data-section="health">
                         <i class="bi bi-heart-pulse"></i> Здоровье
                     </a>
@@ -186,15 +183,8 @@
                                     {% endfor %}
                                 </div>
                             </div>
-                            {% if i['money'] == 0 %}
-                            <h3 class="fw-bold mb-0 text-success text-bold text-nowrap" style="min-width: 60px;">
-                                по абонементу
-                            </h3>
-                            {% else %}
                             <h3 class="fw-bold mb-0 text-success text-bold text-nowrap" style="min-width: 60px;">
                                 {{ i['money'] }} ₽
-                            </h3>
-                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
@@ -203,132 +193,6 @@
                     {% endif %}
                 </div>
             </div>
-
-            <!-- 2. АБОНЕМЕНТ (ТОЛЬКО ДЛЯ УЧЕНИКА rights == 1) -->
-            <div id="abonement" class="card card-hover p-4 border-0 shadow-sm mb-4" style="scroll-margin-top: 120px;">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div>
-                        <h5 class="fw-bold mb-2">Ваш абонемент</h5>
-                        <p class="text-muted small mb-0">Какой ваш абонемент</p>
-                    </div>
-                    <a href="/pricing" class="btn btn-outline-primary btn-sm rounded-pill">
-                        <i class="bi bi-eye me-1"></i>Подробнее об абонементах
-                    </a>
-                </div>
-
-                <!-- ТЕКУЩИЙ АБОНЕМЕНТ -->
-                <div class="mb-4">
-                    <label class="form-label small fw-bold text-muted d-block mb-2">Текущий статус</label>
-                    {% if abonement and abonement != "null" %}
-                    <div
-                        class="alert alert-success border-2 border-success border-opacity-25 bg-success bg-opacity-10 rounded-3 py-3 px-4">
-                        <div class="d-flex align-items-center gap-3">
-                            <i class="bi bi-check-circle-fill text-success fs-4"></i>
-                            <div>
-                                <h6 class="fw-bold mb-1">
-                                    Активный абонемент:
-                                    {% if abonement == "Завтрак" %}Только Завтраки
-                                    {% elif abonement == "Полноценный" %}Завтрак + Обед
-                                    {% elif abonement == "Льготный" %}Льготный
-                                    {% else %}{{ abonement }}{% endif %}
-                                </h6>
-                                <p class="text-muted small mb-0">Действует до конца текущего месяца</p>
-                            </div>
-                        </div>
-                    </div>
-                    {% else %}
-                    <div
-                        class="alert alert-info border-2 border-info border-opacity-25 bg-info bg-opacity-10 rounded-3 py-3 px-4">
-                        <div class="d-flex align-items-center gap-3">
-                            <i class="bi bi-info-circle-fill text-info fs-4"></i>
-                            <div>
-                                <h6 class="fw-bold mb-1">Нет активного абонемента</h6>
-                                <p class="text-muted small mb-0">Выберите подходящий абонемент на соответствующей
-                                    странице </p>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                </div>
-
-                <!-- ВЫБОР АБОНЕМЕНТА -->
-                <form id="abonement-form" action="{{ url_for('profile') }}" method="post">
-                    <input name="commit_type" value="update_abonement" hidden>
-
-                    <label class="form-label small fw-bold text-muted d-block mb-3">Доступные абонементы</label>
-
-                    <div class="row g-3 mb-4">
-                        <!-- ТОЛЬКО ЗАВТРАКИ -->
-                        <div class="col-md-4">
-                            <div class="abonement-option h-100 {% if abonement == 'Завтрак' %}active{% endif %}">
-                                <div
-                                    class="card border h-100 {% if abonement == 'Завтрак' %}border-success border-2{% else %}border-light{% endif %} rounded-3 p-3">
-                                    <div class="d-flex align-items-start mb-2">
-                                        <div class="ms-2">
-                                            <h6 class="fw-bold mb-1">Только Завтраки</h6>
-                                            <div class="text-primary fw-bold mb-1">5 000₽/месяц</div>
-                                            <ul class="small text-muted mb-0 ps-0" style="list-style: none;">
-                                                <li class="mb-1"><i class="bi bi-check text-success me-1"></i> Каждый
-                                                    день завтрак</li>
-                                                <li class="mb-1"><i class="bi bi-check text-success me-1"></i> Доступ
-                                                    после 9:00</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ЗАВТРАК + ОБЕД -->
-                        <div class="col-md-4">
-                            <div class="abonement-option h-100 {% if abonement == 'Полноценный' %}active{% endif %}">
-                                <div
-                                    class="card border h-100 {% if abonement == 'Полноценный' %}border-success border-2{% else %}border-primary border-2{% endif %} rounded-3 p-3">
-                                    <div class="d-flex align-items-start mb-2">
-                                        <div class="ms-2">
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <h6 class="fw-bold mb-1">Завтрак + Обед</h6>
-                                                <span
-                                                    class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-2 py-1 small">Популярный</span>
-                                            </div>
-                                            <div class="text-primary fw-bold mb-1">10 000₽/месяц</div>
-                                            <ul class="small text-muted mb-0 ps-0" style="list-style: none;">
-                                                <li class="mb-1"><i class="bi bi-check text-primary me-1"></i>
-                                                    Полноценное питание</li>
-                                                <li class="mb-1"><i class="bi bi-check text-primary me-1"></i> Завтрак +
-                                                    Обед</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ЛЬГОТНЫЙ -->
-                        <div class="col-md-4">
-                            <div class="abonement-option h-100 {% if abonement == 'Льготный' %}active{% endif %}">
-                                <div
-                                    class="card border h-100 {% if abonement == 'Льготный' %}border-success border-2{% else %}border-light{% endif %} rounded-3 p-3">
-                                    <div class="d-flex align-items-start mb-2">
-                                        <div class="ms-2">
-                                            <h6 class="fw-bold mb-1">Льготный</h6>
-                                            <div class="text-primary fw-bold mb-1">Бесплатно</div>
-                                            <ul class="small text-muted mb-0 ps-0" style="list-style: none;">
-                                                <li class="mb-1"><i class="bi bi-check text-success me-1"></i> Питание
-                                                    за счёт бюджета</li>
-                                                <li class="mb-1"><i class="bi bi-check text-success me-1"></i> По одному
-                                                    приёму пищи</li>
-                                                <li><i class="bi bi-check text-success me-1"></i> Для льготных категорий
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
             {% endif %}
 
             <!-- 3. ЗДОРОВЬЕ (ТОЛЬКО ДЛЯ УЧЕНИКА rights == 1) -->
@@ -336,7 +200,6 @@
             <div id="health" class="card card-hover p-4 border-0 shadow-sm mb-4" style="scroll-margin-top: 120px;">
                 <div class="d-flex align-items-center gap-2 mb-4">
                     <h5 class="fw-bold mb-0">Пищевые ограничения</h5>
-                    <span class="badge bg-warning text-dark bg-opacity-25 border border-warning">Важно</span>
                 </div>
                 <p class="text-muted small mb-4">Отметьте продукты, которые вам нельзя употреблять. Они будут подсвечены
                     в меню.</p>

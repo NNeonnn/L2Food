@@ -177,62 +177,11 @@ def pay():
     cart_items, cart_total = get_cart_objects(email)
     kwargs['cart_items'] = cart_items
     kwargs['cart_total'] = cart_total
-    user = getuser(email)
-    cart_objects = user['cart']
-    canAbonement = True
-    for i in range(1): # Так как в python нет привычного инструментария из c++ с goto, то приходится импровизировать
-        if (user['abonement'] == 'null'):
-            canAbonement = False
-            break
-        abonementDays = getquerylist('abonement_conf.json')
-        if (user['last_used_day'] == today_days()):
-            if (user['last_used_hour'] <= today_hour() < abonementDays[user['abonement']][0]):
-                canAbonement = False
-                break
-            if (abonementDays[user['abonement']][-1] < user['last_used_hour'] <= today_hour()):
-                canAbonement = False
-                break
-            for i in range(0, len(abonementDays[user['abonement']]) - 1):
-                if (abonementDays[user['abonement']][i] <= user['last_used_hour'] <= today_hour() < abonementDays[user['abonement']][i + 1]):
-                    canAbonement = False
-                    break
-        if (len(cart_objects) > 2):
-            canAbonement = False
-            break
-        cnt = 0
-        for i in cart_objects:
-            cnt += i[1]
-        if (cnt > 2):
-            canAbonement = False
-            break
-        drinks = 0
-        not_drinks = 0
-        productlist = getproductlist()
-        for i in cart_objects:
-            if (productlist[i[0]]['category'] == 'Напитки'):
-                drinks += 1
-            else:
-                not_drinks += 1
-        if (drinks > 1 or not_drinks > 1):
-            canAbonement = False
-            break
     if (request.method == 'POST'):
         session['cart_date'] = request.form.to_dict(flat=False)['date'][0]
-        return render_template('pay.html', now_date=request.form.to_dict(flat=False)['date'][0], canAbonement=canAbonement, productlist=getproductlist(), takequeries=getuser(email)['to_take'], **kwargs)
+        return render_template('pay.html', now_date=request.form.to_dict(flat=False)['date'][0], productlist=getproductlist(), takequeries=getuser(email)['to_take'], **kwargs)
     else:
-        return render_template('pay.html', now_date=session.get('cart_date', '2000-01-01'), canAbonement=canAbonement, productlist=getproductlist(), takequeries=getuser(email)['to_take'], **kwargs)
-
-def setabonement(id):
-    email = getlogin()
-    if email != 'placeholder':
-        user = getuser(email)
-        user['last_used_day'] = -1
-        user['last_used_hour'] = -1
-        prices = getquerylist('abonement_price.json')
-        user['money'] -= max(0, prices[id] - prices[user['abonement']])
-        user['abonement'] = id
-        setuser(email, user)
-    return redirect(url_for('pricing'))
+        return render_template('pay.html', now_date=session.get('cart_date', '2000-01-01'), productlist=getproductlist(), takequeries=getuser(email)['to_take'], **kwargs)
 
 def returnback():
     return redirect(session.get('pre_previous_page', '/dashboard'))

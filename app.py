@@ -6,7 +6,6 @@ import subscript.simple_routes as simple_r
 import subscript.account_routes as account_r
 import subscript.student_routes as student_r
 import subscript.product_routes as product_r
-import subscript.povar_routes as povar_r
 import subscript.admin_routes as admin_r
 import os
 import secrets
@@ -47,11 +46,7 @@ app.add_url_rule('/payment', view_func=student_r.payment, methods=['GET', 'POST'
 app.add_url_rule('/pay', view_func=student_r.pay, methods=['GET', 'POST'])
 app.add_url_rule('/returnback', view_func=student_r.returnback)
 #product_routes.py
-app.add_url_rule('/product/setcommentary/<id>', view_func=product_r.sendcommentary, methods=['POST'])
 app.add_url_rule('/product/<id>', view_func=product_r.product_detail, methods=['GET'])
-#povar_routes.py
-app.add_url_rule('/send_food/<id>', view_func=povar_r.sendfood)
-app.add_url_rule('/buy_to_admin', view_func=povar_r.buy_to_admin, methods=['POST'])
 #admin_routes.py
 app.add_url_rule('/set_admin_query', view_func=admin_r.set_admin_query, methods=['POST'])
 app.add_url_rule('/download_student_report', view_func=admin_r.download_student_report)
@@ -87,10 +82,6 @@ def dashboard():
         kwargs['cart_total'] = cart_total
         return render_template('dashboard.html', productlist=getproductlist(), takequeries=getuser(email)['to_take'], **kwargs)
     elif (kwargs['rights'] == 2):
-        return render_template('dashboard.html', **kwargs, querylist=getquerylist("student_to_povar.json"),\
-                                                           productlist=getproductlist(),
-                                                           toadmin=getquerylist("povar_to_admin.json"))
-    elif (kwargs['rights'] == 3):
         balance_q = getquerylist('payment.json')
         balance_requests = []
         for i in balance_q:

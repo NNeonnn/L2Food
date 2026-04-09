@@ -54,6 +54,7 @@
 
     {% if rights == 1 %}
     <!-- УВЕДОМЛЕНИЕ О ГОТОВОМ ЗАКАЗЕ -->
+    {% set allcategories = ['Первое', 'Второе', 'Напитки', 'Салаты', 'Фрукты', 'Выпечка', 'Завтрак'] %}
     {% set active_order = {'items': ['Борщ', 'Котлета с пюре', 'Компот'], 'time': '12:30'} %}
     {% if takequeries|length > 0 %}
     {% for query in takequeries %}
@@ -111,13 +112,9 @@
                     <div class="mb-4">
                         <span class="filter-group-title">КАТЕГОРИИ</span>
                         <div class="d-flex flex-column gap-2">
-                            <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="Первое" checked id="c1_m"><label class="form-check-label cursor-pointer" for="c1_m">Первое</label></div>
-                            <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="Второе" checked id="c2_m"><label class="form-check-label cursor-pointer" for="c2_m">Второе</label></div>
-                            <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="Напитки" checked id="c3_m"><label class="form-check-label cursor-pointer" for="c3_m">Напитки</label></div>
-                            <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="Салаты" checked id="c4_m"><label class="form-check-label cursor-pointer" for="c4_m">Салаты</label></div>
-                            <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="Фрукты" checked id="c5_m"><label class="form-check-label cursor-pointer" for="c5_m">Фрукты</label></div>
-                            <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="Выпечка" checked id="c6_m"><label class="form-check-label cursor-pointer" for="c6_m">Выпечка</label></div>
-                            <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="Завтрак" checked id="c7_m"><label class="form-check-label cursor-pointer" for="c7_m">Завтрак</label></div>
+                            {% for i in range(allcategories|length) %}
+                            <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="{{allcategories[i]}}" checked id="c{{i + 1}}_m"><label class="form-check-label cursor-pointer" for="c{{i + 1}}_m">{{allcategories[i]}}</label></div>
+                            {% endfor %}
                         </div>
                     </div>
 
@@ -307,6 +304,8 @@
         <div class="col-lg-9">
             <div class="row g-4" id="productsGrid">
                 {% if productlist %}
+                {% for category in allcategories %}
+                <h1>{{category}}</h1>
                 {% for id, item in productlist.items() %}
                 {% set ns = namespace(is_dangerous=false, danger_reason="") %}
                 {% if allergies and item.allergens %}
@@ -317,7 +316,8 @@
                 {% endif %}
                 {% endfor %}
                 {% endif %}
-
+                
+                {% if item.category == category %}
                 <div class="col-md-4 col-sm-6 product-item" data-category="{{ item.category }}"
                     data-allergen="{{ 'true' if ns.is_dangerous else 'false' }}">
                     <div class="product-card h-100 d-flex flex-column position-relative bg-white rounded-4 border overflow-hidden">
@@ -377,10 +377,12 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
+                {% endfor %}
                 {% endfor %}
                 {% else %}
                 <div class="col-12 text-center py-5">
-                    <h4 class="text-muted">Меню загружается или пусто...</h4>
+                    <h4 class="text-muted">На этот день недели меню</h4>
                 </div>
                 {% endif %}
             </div>
