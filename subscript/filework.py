@@ -57,16 +57,12 @@ def setuser(email, changes):
         f.write(json.dumps(changes, indent = 4))
 
 def setproduct(id, to):
-    users_path = f"{base_path}/products/{id}.json"
-    with open(users_path, 'w', encoding='utf-8') as f:
-        f.write(json.dumps(to, indent = 4))
+    lst = getproductlist()
+    lst[id] = to
+    setproductlist(lst)
 
 def getproduct(id):
-    products_path = f"{base_path}/products/{id}.json"
-    if os.path.exists(products_path):
-        with open(products_path, 'r', encoding='utf-8') as f:
-            return json.loads(f.read())
-    return False
+    return getproductlist()[id]
 
 def setquerylist(name, to):
     users_path = f"{base_path}/queries/{name}"
