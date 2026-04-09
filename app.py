@@ -100,7 +100,7 @@ def dashboard():
             glob['today'] = today_days()
             glob['today_money'] = 0
             setquerylist(name="global.json", to=glob)
-        return render_template('dashboard.html', admin_money=glob['today_money'], **kwargs, toadmin=getquerylist("povar_to_admin.json"), balance_requests=balance_requests)
+        return render_template('dashboard.html', admin_money=glob['today_money'], **kwargs, toadmin=[], balance_requests=balance_requests)
 
 
 #start
