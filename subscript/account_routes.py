@@ -79,9 +79,6 @@ def confirm_mail(): # for registration
             'money': 0,
             'cart': [],
             'to_take': [],
-            'abonement': 'null',
-            'last_used_hour': -1,
-            'last_used_day': -1,
             'history': []
         })
         session['temp_password'] = False

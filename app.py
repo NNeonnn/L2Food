@@ -29,7 +29,6 @@ Session(app)
 
 #simple_routes.py
 app.add_url_rule('/', view_func=simple_r.landing)
-app.add_url_rule('/pricing', view_func=simple_r.pricing)
 #account_routes.py
 app.add_url_rule('/login', view_func=account_r.login, methods=['GET', 'POST'])
 app.add_url_rule('/register', view_func=account_r.register, methods=['GET', 'POST'])
@@ -46,7 +45,6 @@ app.add_url_rule('/buy_from_cart', view_func=student_r.buy_from_cart, methods=['
 app.add_url_rule('/remove_from_cart/<id>', view_func=student_r.remove_from_cart)
 app.add_url_rule('/payment', view_func=student_r.payment, methods=['GET', 'POST'])
 app.add_url_rule('/pay', view_func=student_r.pay, methods=['GET', 'POST'])
-app.add_url_rule('/setabonement/<id>', view_func=student_r.setabonement)
 app.add_url_rule('/returnback', view_func=student_r.returnback)
 #product_routes.py
 app.add_url_rule('/product/setcommentary/<id>', view_func=product_r.sendcommentary, methods=['POST'])
