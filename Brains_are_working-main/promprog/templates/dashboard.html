@@ -1,0 +1,1139 @@
+{% extends "base.html" %}
+{% block title %}
+{% if rights == 2 %}Рабочее место повара{% elif rights == 3 %}Кабинет администратора{% else %}Меню столовой{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+
+    <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ -->
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-5 gap-3">
+        <div>
+            <h1 class="fw-bold mb-1">
+                {% if rights == 0 %}Меню столовой 🍴{% endif %}
+                {% if rights == 1 and first_name != "" %}Привет, {{ first_name }}! 👋{% endif %}
+                {% if rights == 1 and first_name == "" %}Привет! 👋{% endif %}
+                {% if rights == 2 %}Панель управления кухней 👨‍🍳{% endif %}
+                {% if rights == 3 %}Кабинет администратора 👔{% endif %}
+            </h1>
+            <p class="text-secondary mb-0">
+                {% if rights == 0 %}Войдите, чтобы сделать заказ.{% endif %}
+                {% if rights == 1 %}
+                <span class="d-inline-flex align-items-center gap-2 flex-wrap">
+                    <!-- ПИЛЮЛЯ С БАЛАНСОМ -->
+                    <span class="badge rounded-pill bg-light border text-dark px-3 py-2 shadow-sm"
+                        style="font-weight: 600;">
+                        <i class="bi bi-cash-coin text-success me-1"></i>
+                        Баланс:
+                        <span class="text-success fw-bold">{{ money }} ₽</span>
+                    </span>
+
+                    <!-- КНОПКА ТОГО ЖЕ РАЗМЕРА -->
+                    <a href="{{ url_for('payment') }}"
+                        class="btn btn-primary-custom btn-pill shadow-sm btn-sm px-3 py-2">
+                        <i class="bi bi-wallet2 me-1"></i>Пополнить
+                    </a>
+                </span>
+                {% endif %}
+
+                {% if rights == 1 %}{% if abonement != "null" %}<br><br>Активен абонемент: <span
+                    class="fw-bold text-success">{{abonement}}</span>{% endif %}{% endif %}
+                {% if rights == 2 %}Учет выдачи блюд, контроль склада и закупки.{% endif %}
+                {% if rights == 3 %}Статистика, согласование закупок и отчетность.{% endif %}
+            </p>
+        </div>
+
+        <!-- КНОПКИ ДЕЙСТВИЙ -->
+        {% if rights == 0 %}
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('login') }}" class="btn btn-primary-custom btn-pill shadow-sm">
+                Войти для заказа
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- ============================================== -->
+    <!-- 2. РОЛЬ: УЧЕНИК (1) И ГОСТЬ (0) - МЕНЮ     -->
+    <!-- ============================================== -->
+    {% if rights == 1 or rights == 0 %}
+
+    {% if rights == 1 %}
+    <!-- УВЕДОМЛЕНИЕ О ГОТОВОМ ЗАКАЗЕ -->
+    {% set active_order = {'items': ['Борщ', 'Котлета с пюре', 'Компот'], 'time': '12:30'} %}
+    {% if takequeries|length > 0 %}
+    {% for query in takequeries %}
+    <div class="alert alert-success border border-success bg-light border-2 border-opacity-25 rounded-3 p-3 mb-4 shadow-sm"
+        role="alert">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center"
+                    style="width: 40px; height: 40px;">
+                    <i class="bi bi-bell-fill"></i>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-0">Ваш заказ готов!</h6>
+                    <p class="text-muted small mb-0">Заберите его в столовой</p>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3 pt-3 border-top">
+            <p class="small text-muted mb-2">Состав заказа:</p>
+            <div class="d-flex flex-wrap gap-1">
+                {% for product in query['products'] %}
+                <span class="badge bg-light border text-dark small ">{{ product }}</span>
+                {% endfor %}
+            </div>
+            <form id="takeform{{query['id']}}" method="post" action="/got_food/{{query['id']}}">
+                <div class="mt-2">
+                    <input hidden type="text" value="{{query['id']}}">
+                    <button type="submit" class="btn btn-sm btn-success btn-pill">Подтвердить получение</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endif %}
+
+    <div class="row g-4">
+        <!-- ЛЕВАЯ КОЛОНКА -->
+        <div class="col-lg-3">
+            <div>
+
+                <!-- ОБЪЕДИНЕННЫЙ БЛОК: ФИЛЬТРЫ + КОРЗИНА -->
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <!-- 2.1 ФИЛЬТРЫ -->
+                    <div class="p-3 border-bottom">
+                        <div class="mb-4">
+                            <span class="filter-group-title">КАТЕГОРИИ</span>
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox"
+                                        value="Первое" checked id="c1"><label class="form-check-label cursor-pointer"
+                                        for="c1">Первое</label></div>
+                                <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox"
+                                        value="Второе" checked id="c2"><label class="form-check-label cursor-pointer"
+                                        for="c2">Второе</label></div>
+                                <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox"
+                                        value="Напитки" checked id="c3"><label class="form-check-label cursor-pointer"
+                                        for="c3">Напитки</label></div>
+                                <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox"
+                                        value="Салаты" checked id="c4"><label class="form-check-label cursor-pointer"
+                                        for="c4">Салаты</label></div>
+                                <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox"
+                                        value="Фрукты" checked id="c5"><label class="form-check-label cursor-pointer"
+                                        for="c5">Фрукты</label></div>
+                                <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox"
+                                        value="Выпечка" checked id="c6"><label class="form-check-label cursor-pointer"
+                                        for="c6">Выпечка</label></div>
+                                <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox"
+                                        value="Завтрак" checked id="c7"><label class="form-check-label cursor-pointer"
+                                        for="c7">Завтрак</label></div>
+                            </div>
+                        </div>
+
+                        {% if rights == 1 %}
+                        <div class="mb-4">
+                            <span class="filter-group-title">ЗДОРОВЬЕ</span>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="allergyFilter" {% if allergies
+                                    %}checked{% endif %}>
+                                <label class="form-check-label fw-bold" for="allergyFilter">Скрыть аллергены</label>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-light rounded-3 border">
+                            <small class="fw-bold text-muted">Ваши аллергены:</small>
+                            <div class="d-flex gap-1 flex-wrap mt-2">
+                                {% if allergies %}{% for alg in allergies %}<span
+                                    class="badge bg-danger bg-opacity-10 text-danger border border-danger">{{ alg
+                                    }}</span>{% endfor %}{% else %}<span class="text-muted small">Нет данных</span>{%
+                                endif
+                                %}
+                            </div>
+                            <a href="{{ url_for('profile') }}"
+                                class="d-block small text-primary text-decoration-none mt-2">Изменить в профиле</a>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- 2.2 КОРЗИНА (ВАШ ЗАКАЗ) -->
+                    {% if rights == 1 %}
+                    <div class="p-3">
+                        <div class="d-flex align-items-center gap-2 mb-3 border-bottom pb-2">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 32px; height: 32px;"><i class="bi bi-basket2"></i></div>
+                            <h5 class="fw-bold mb-0">Ваш заказ</h5>
+                        </div>
+
+                        {% if cart_items %}
+                        <div class="d-flex flex-column gap-2 mb-3" style="max-height: 200px; overflow-y: auto;">
+                            <!-- Заголовки колонок -->
+                            <div
+                                class="d-flex justify-content-between align-items-center small text-muted border-bottom pb-1">
+                                <span class="flex-grow-1">Товар</span>
+                                <span class="text-end" style="min-width: 100px;">Кол-во и цена</span>
+                            </div>
+
+                            {% for item in cart_items %}
+                            {% if item[1] == 1 %}
+                            <div class="d-flex justify-content-between align-items-center small">
+                                <span class="flex-grow-1">{{ item[0].name }}</span>
+                                <div class="d-flex align-items-center justify-content-end"
+                                    style="min-width: 100px; gap: 8px;">
+                                    <span>{{ item[1] }}</span>
+                                    <span class="fw-bold">×</span>
+                                    <span>{{ item[0].price }} ₽</span>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="d-flex justify-content-between align-items-center small" style="color: red;">
+                                <span class="flex-grow-1" style="color: blue;">{{ item[0].name }}</span>
+                                <div class="d-flex align-items-center justify-content-end"
+                                    style="min-width: 100px; gap: 8px; color: blue;">
+                                    <span>{{ item[1] }}</span>
+                                    <span class="fw-bold">×</span>
+                                    <span>{{ item[0].price }} ₽</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center border-top pt-2 mb-3">
+                            <span class="text-muted">Итого:</span>
+                            <span class="fw-bold fs-5 text-primary">{{ cart_total }} ₽</span>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <form action="{{ url_for('pay') }}" method="post">
+                                <input required type="date" id="datepicker" name="date" class="form-control rounded-3"
+                                    style="margin-left: auto; margin-right: auto; margin-bottom: 10px;"
+                                    value="{{ now_date }}"></input>
+                                <button type="submit" class="btn btn-success btn-sm rounded-pill"
+                                    style="width: 100%;">Оплатить</button>
+                            </form>
+                            <a href="{{ url_for('clear_cart') }}"
+                                class="btn btn-light border btn-sm rounded-pill text-danger">Очистить</a>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-3 text-muted small">
+                            Корзина пуста.<br>Добавьте что-нибудь вкусное!
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                <!-- КОНЕЦ ОБЪЕДИНЕННОГО БЛОКА -->
+
+            </div>
+        </div>
+
+        <!-- СЕТКА ТОВАРОВ (СПРАВА) -->
+        <div class="col-lg-9">
+            <div class="row g-4" id="productsGrid">
+                {% if productlist %}
+
+                {% for id, item in productlist.items() %}
+
+                {% set ns = namespace(is_dangerous=false, danger_reason="") %}
+                {% if allergies and item.allergens %}
+                {% for prod_allergen in item.allergens %}
+                {% if prod_allergen in allergies %}
+                {% set ns.is_dangerous = true %}
+                {% set ns.danger_reason = prod_allergen %}
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+
+                <div class="col-md-4 col-sm-6 product-item" data-category="{{ item.category }}"
+                    data-allergen="{{ 'true' if ns.is_dangerous else 'false' }}">
+
+                    <!-- Ссылка на товар -->
+                    <div
+                        class="product-card h-100 d-flex flex-column position-relative bg-white rounded-4 border overflow-hidden">
+
+                        {% if ns.is_dangerous %}
+                        <div class="position-absolute top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex align-items-center justify-content-center danger-overlay"
+                            style="z-index: 10; display: none;">
+                            <span class="badge bg-danger fs-6 shadow"><i
+                                    class="bi bi-exclamation-triangle-fill me-1"></i> Содержит: {{ ns.danger_reason
+                                }}</span>
+                        </div>
+                        {% endif %}
+
+                        <a href="{{ url_for('product_detail', id=id) }}" class="text-decoration-none text-dark">
+                            <div class="product-img-wrapper d-flex align-items-center justify-content-center bg-light"
+                                style="height: 180px;">
+                                <image src="{{ url_for('static', filename='images/products/' + id|string + '.png') }}"
+                                    style="width: 120px;"></image>
+                            </div>
+                        </a>
+
+                        <div class="p-3 d-flex flex-column flex-grow-1">
+                            <div class="text-muted small mb-1">{{ item.category }}</div>
+                            <h6 class="fw-bold mb-2 text-truncate">{{ item.name }}</h6>
+
+                            {% if item.allergens %}
+                            <div class="mb-2">
+                                {% for alg in item.allergens %}
+                                {% if alg in allergies %}
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger"
+                                    style="font-size: 0.65rem;">{{ alg }}</span>
+                                {% else %}
+                                <span class="badge bg-light text-secondary border" style="font-size: 0.65rem;">{{ alg
+                                    }}</span>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            <div class="mt-auto d-flex justify-content-between align-items-center pt-2">
+                                <span class="fw-bold text-primary fs-5">{{ item.price }} ₽</span>
+
+                                <!-- КНОПКА ДОБАВЛЕНИЯ В КОРЗИНУ -->
+                                {% if rights == 1 %}
+                                <div style="display: flex; align-items: center;">
+                                    {% for j in cart_items %}
+                                    {% if j[0]['name'] == item['name'] %}
+                                    <a href="{{ url_for('remove_from_cart', id=id) }}"
+                                        class="btn btn-sm btn-light border rounded-circle shadow-sm hover-primary d-flex align-items-center justify-content-center"
+                                        style="width: 32px; height: 32px; display: inline-block;">
+                                        -
+                                    </a>
+                                    <span style="margin: 0 8px;">{{j[1]}}</span>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <a href="{{ url_for('add_to_cart', id=id) }}"
+                                        class="btn btn-sm btn-light border rounded-circle shadow-sm hover-primary d-flex align-items-center justify-content-center"
+                                        style="width: 32px; height: 32px; display: inline-block;">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="col-12 text-center py-5">
+                    <h4 class="text-muted">Меню загружается или пусто...</h4>
+                </div>
+                {% endif %}
+            </div>
+
+            <div id="noResults" class="text-center py-5 d-none">
+                <i class="bi bi-search fs-1 text-muted opacity-25"></i>
+                <p class="text-muted mt-3">Нет блюд, соответствующих фильтрам.</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+    <!-- ============================================== -->
+    <!-- 3. РОЛЬ 2: ПОВАР / СОТРУДНИК                   -->
+    <!-- ============================================== -->
+    {% if rights == 2 %}
+
+    <!-- KPI КАРТОЧКИ -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-12">
+            <div class="card border-0 shadow-sm p-3 h-100">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-3"><i class="bi bi-clock-history"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold mb-0">{{querylist|length}}</h3>
+                        <small class="text-muted">Ожидают выдачи</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ТАБЫ ПОВАРА -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom pt-3 px-4">
+            <ul class="nav nav-tabs card-header-tabs" id="cookTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link text-secondary" data-bs-toggle="tab" data-bs-target="#orders">
+                        <i class="bi bi-list-check me-2"></i>Выдача блюд
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link text-secondary" data-bs-toggle="tab" data-bs-target="#inventory">
+                        <i class="bi bi-box-seam me-2"></i>Склад и Остатки
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link text-secondary" data-bs-toggle="tab" data-bs-target="#requests">
+                        <i class="bi bi-cart-plus me-2"></i>Заявки на изменения кол-ва товаров
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card-body p-4">
+            <div class="tab-content">
+
+                <!-- 3.0 СТРАНИЦА "ПРИСУТПИМ" -->
+                <div class="tab-pane fade" id="begin">
+                    <h1 style="margin-left: auto; margin-right: auto; margin-left: auto; margin-right: auto;">Давайте
+                        приступим</h1>
+                </div>
+
+                <!-- 3.1 ВЫДАЧА -->
+                <div class="tab-pane fade" id="orders">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Текущая очередь</h5>
+                    </div>
+                    <div class="table-modern-container">
+                        <table class="table-modern">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">Ученик</th>
+                                    <th>Состав заказа</th>
+                                    <th>Дата выдачи</th>
+                                    <th>Время</th>
+                                    <th class="text-end pe-4">Действие</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for query in querylist %}
+                                <tr id="order-{{query.id}}">
+                                    <td class="ps-4 fw-bold">{{query['name']}}</td>
+                                    <td>
+                                        {% for item in range(0, query['products']|length) %}
+                                        {% if item != query['products']|length - 1 %}
+                                        {{query['products'][item] + ','}}
+                                        {% else %}
+                                        {{query['products'][item]}}
+                                        {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td class="text-muted small">{{query['date']}}</td>
+                                    <td class="text-muted small">{{query['time']}}</td>
+                                    <form id="give{{query['id']}}" action="/send_food/{{query['id']}}" method="get">
+                                        <td class="text-end pe-4">
+                                            <button class="btn btn-sm btn-primary-custom btn-pill px-3">Выдать</button>
+                                        </td>
+                                    </form>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3.2 СКЛАД -->
+                <div class="tab-pane fade" id="inventory">
+                    <div class="row g-4">
+                        {% for product in productlist %}
+                        <div class="col-md-6">
+                            <div class="border rounded-3 p-3 position-relative">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-bold">{{productlist[product]['name']}}
+                                        {{productlist[product]['suffix']}}</span>
+                                </div>
+                                <div class="progress mb-2" style="height: 8px;">
+                                    <div class="progress-bar bg-success"
+                                        style="width: {{100.0 * (((productlist[product]['cnt'])|float) / ((productlist[product]['max'])|float))}}%">
+                                    </div>
+                                </div>
+                                <small class="text-muted">Остаток: {{productlist[product]['cnt']}} из
+                                    {{productlist[product]['max']}} {{productlist[product]['suffix']}}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- 3.3 ЗАЯВКИ -->
+                <div class="tab-pane fade" id="requests">
+                    <div class="row">
+                        <div class="col-lg-5 mb-4 mb-lg-0">
+                            <div class="bg-light p-4 rounded-4">
+                                <h5 class="fw-bold mb-3">Создать заявку</h5>
+                                <form id="purchaseForm" action="{{ url_for('buy_to_admin') }}" method="post">
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-muted">Продукт</label>
+                                        <select class="form-select rounded-3" id="prod" name="prod" required>
+                                            {% for product in productlist %}
+                                            <option value="{{product}}">{{productlist[product]['name']}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-muted">Количество (кг/л/шт)</label>
+                                        <input type="number" step="any" class="form-control rounded-3" id="prodAmount"
+                                            name="volume" placeholder="Например: 50, -10 или 2.5" required>
+                                        <small class="text-muted">Можно вводить отрицательные и дробные числа (через
+                                            точку)</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-muted">Причина запроса</label>
+                                        <textarea class="form-control rounded-3" id="reason" name="reason" rows="1"
+                                            placeholder="Укажите причину запроса..."
+                                            style="resize: none; overflow: hidden; min-height: 40px;"
+                                            oninput="autoResize(this)"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary-custom btn-pill w-100">Отправить
+                                        администратору</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-7">
+                            <h5 class="fw-bold mb-3">История заявок</h5>
+                            <div class="list-group list-group-flush" id="requestsList">
+                                {% for i in range(toadmin|length - 1, -1, -1) %}
+                                <div
+                                    class="list-group-item px-0 border-bottom d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="fw-bold mb-0">{{ toadmin[i]["prod"] }} ({{ toadmin[i]["volume"] }})
+                                        </h6>
+                                        <small class="text-muted">{{ toadmin[i]["when"] }}</small>
+                                        {% if toadmin[i].reason %}
+                                        <div class="mt-1">
+                                            <small class="text-muted">Причина: {{ toadmin[i].reason }}</small>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    {% if toadmin[i]['status'] == 0 %}
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary">На рассмотрении</span>
+                                    {% elif toadmin[i]['status'] == 1 %}
+                                    <span class="badge bg-success bg-opacity-10 text-success">Одобрено</span>
+                                    {% elif toadmin[i]['status'] == -1 %}
+                                    <span class="badge bg-danger bg-opacity-10 text-danger">Отклонено</span>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+    <!-- ============================================== -->
+    <!-- 4. РОЛЬ 3: АДМИНИСТРАТОР                   -->
+    <!-- ============================================== -->
+    {% if rights == 3 %}
+
+    <!-- ============================================== -->
+    <!-- 4. РОЛЬ 3: АДМИНИСТРАТОР                   -->
+    <!-- ============================================== -->
+    {% if rights == 3 %}
+
+    <!-- ТАБЫ АДМИНА -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom pt-3 px-4">
+            <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link text-secondary" data-bs-toggle="tab" data-bs-target="#stats">
+                        <i class="bi bi-bar-chart-fill me-2"></i>Статистика
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link text-secondary" data-bs-toggle="tab" data-bs-target="#admin-requests">
+                        <i class="bi bi-inbox-fill me-2"></i>Заявки на закупку
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link text-secondary" data-bs-toggle="tab" data-bs-target="#balance-requests">
+                        <i class="bi bi-cash-stack me-2"></i>Запросы на пополнение
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link text-secondary" data-bs-toggle="tab" data-bs-target="#reports">
+                        <i class="bi bi-file-earmark-text-fill me-2"></i>Отчеты
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card-body p-4">
+            <div class="tab-content">
+
+                <!-- 4.0 СТРАНИЦА "ПРИСУТПИМ" -->
+                <div class="tab-pane fade" id="begin">
+                    <h1 style="margin-left: auto; margin-right: auto; margin-left: auto; margin-right: auto;">Давайте
+                        приступим</h1>
+                </div>
+
+                <!-- 4.1 СТАТИСТИКА -->
+                <div class="tab-pane fade" id="stats">
+                    <!-- KPI Cards -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm p-4 bg-light">
+                                <h6 class="text-muted text-uppercase small fw-bold">Выручка за день</h6>
+                                <h2 class="fw-bold text-primary mb-0">{{admin_money}} ₽</h2>
+                                <small class="text-muted"><br></small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm p-4 bg-light">
+                                <h6 class="text-muted text-uppercase small fw-bold">Посещаемость</h6>
+                                <h2 class="fw-bold text-dark mb-0">85%</h2>
+                                <small class="text-muted">640 из 750 учеников</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- График -->
+                    <div class="card border-0 shadow-sm p-4">
+                        <h5 class="fw-bold mb-4">Динамика посещаемости (неделя)</h5>
+                        <div style="height: 300px;">
+                            <canvas id="attendanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4.2 СОГЛАСОВАНИЕ ЗАКУПОК -->
+                <div class="tab-pane fade" id="admin-requests">
+                    <h5 class="fw-bold mb-3">Заявки от кухни</h5>
+
+                    <!-- История заявок -->
+                    <div class="list-group list-group-flush" id="adminRequestsList">
+                        {% for i in range(toadmin|length - 1, -1, -1) %}
+                        <div
+                            class="list-group-item px-0 border-bottom d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="fw-bold mb-0">{{ toadmin[i]["prod"] }} ({{ toadmin[i]["volume"] }})</h6>
+                                <small class="text-muted">{{ toadmin[i]["when"] }}</small>
+                                {% if toadmin[i]['desc'] %}
+                                <div class="mt-1">
+                                    <small class="text-muted">Причина: {{ toadmin[i]['desc'] }}</small>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            {% if toadmin[i]['status'] == 0 %}
+                            <!-- Форма с кнопками для не согласованных заявок -->
+                            <form id="req-form-{{toadmin[i]['id']}}" action="{{ url_for('set_admin_query') }}"
+                                method="post">
+                                <input value="{{toadmin[i]['id']}}" type="hidden" name="id">
+                                <div class="d-flex gap-2">
+                                    <button name="result" value="1" type="submit"
+                                        class="btn btn-sm btn-success rounded-pill px-3">Согласовать</button>
+                                    <button name="result" value="-1" type="submit"
+                                        class="btn btn-sm btn-outline-danger rounded-pill px-3">Отклонить</button>
+                                </div>
+                            </form>
+                            {% elif toadmin[i]['status'] == 1 %}
+                            <span class="badge bg-success bg-opacity-10 text-success">Одобрено</span>
+                            {% elif toadmin[i]['status'] == -1 %}
+                            <span class="badge bg-danger bg-opacity-10 text-danger">Отклонено</span>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if toadmin|length == 0 %}
+                    <div class="text-center py-5">
+                        <div class="bg-light rounded-3 p-5">
+                            <i class="bi bi-inbox fs-1 text-muted opacity-25 mb-3"></i>
+                            <h5 class="text-muted mb-2">Нет заявок</h5>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- 4.3 ЗАПРОСЫ НА ПОПОЛНЕНИЕ БАЛАНСА -->
+                <div class="tab-pane fade" id="balance-requests">
+                    <h5 class="fw-bold mb-4">Запросы на пополнение баланса</h5>
+
+                    {% if balance_requests and balance_requests|length > 0 %}
+                    <div class="d-flex flex-column gap-4">
+                        {% for i in range(balance_requests|length - 1, -1, -1) %}
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="row g-4">
+                                    <!-- Левая колонка: Большая картинка для скриншотов -->
+                                    <div class="col-md-5 col-lg-4">
+                                        <div class="d-flex align-items-center justify-content-center h-100">
+                                            <img src="{{ url_for('static', filename='images/screenshots/' + i|string + '.jpg') }}"
+                                                alt="Скриншот телефона" class="img-fluid rounded-3"
+                                                style="max-width: 100%; max-height: 500px; object-fit: contain; border: 1px solid #dee2e6;">
+                                        </div>
+                                    </div>
+
+                                    <!-- Правая колонка: Информация -->
+                                    <div class="col-md-7 col-lg-8">
+                                        <div class="d-flex flex-column h-100">
+                                            <h5 class="fw-bold mb-4">Запрос #{{ i + 1 }}</h5>
+
+                                            <div class="mb-3">
+                                                <small class="text-muted d-block">Почта:</small>
+                                                <span class="fw-medium fs-6">{{ balance_requests[i].email }}</span>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <small class="text-muted d-block">ФИО:</small>
+                                                <span class="fw-medium fs-6">{{ balance_requests[i].name }}</span>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <small class="text-muted d-block">Телефон:</small>
+                                                <span class="fw-medium fs-6">{{ balance_requests[i].phone }}</span>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <small class="text-muted d-block">Класс обучения:</small>
+                                                <span class="fw-medium fs-6">{{ balance_requests[i].grade }}</span>
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <small class="text-muted d-block">Сумма пополнения:</small>
+                                                <span class="fw-bold text-primary fs-4">{{ balance_requests[i].amount }}
+                                                    ₽</span>
+                                            </div>
+
+                                            <!-- Кнопки действий -->
+                                            {% if balance_requests[i].approved == 0 %}
+                                            <div class="d-flex gap-3 mt-auto">
+                                                <form action="{{ url_for('approve_balance_req', id=i) }}" method="get"
+                                                    class="flex-fill">
+                                                    <button type="submit" class="btn btn-success btn-lg w-100 py-2">
+                                                        <i class="bi bi-check-lg me-2"></i>Одобрить
+                                                    </button>
+                                                </form>
+                                                <form action="{{ url_for('decline_balance_req', id=i) }}" method="get"
+                                                    class="flex-fill">
+                                                    <button type="submit"
+                                                        class="btn btn-outline-danger btn-lg w-100 py-2">
+                                                        <i class="bi bi-x-lg me-2"></i>Отклонить
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            {% elif balance_requests[i].approved == 1 %}
+                                            <div class="d-flex gap-3 mt-auto">
+                                                <h4 class="text-success">Одобрено</h4>
+                                            </div>
+                                            {% else %}
+                                            <div class="d-flex gap-3 mt-auto">
+                                                <h4 class="text-danger">Отклонено</h4>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <div class="bg-light rounded-3 p-5">
+                            <i class="bi bi-cash-stack fs-1 text-muted opacity-25 mb-3"></i>
+                            <h5 class="text-muted mb-2">Нет запросов на пополнение</h5>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- 4.4 ОТЧЕТЫ -->
+                <div class="tab-pane fade" id="reports">
+                    <h5 class="fw-bold mb-4">Формирование отчетов</h5>
+                    <div class="row g-4">
+                        <!-- Первая карточка -->
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm p-4 h-100">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+                                        <i class="bi bi-file-earmark-spreadsheet fs-3"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-0">Отчет по заказам</h6>
+                                        <small class="text-muted">Все заказы учеников поварам</small>
+                                    </div>
+                                </div>
+                                <a href="{{ url_for('download_student_report') }}"
+                                    class="btn btn-outline-primary btn-pill w-100 mt-auto">
+                                    Скачать Excel
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Вторая карточка -->
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm p-4 h-100">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+                                        <i class="bi bi-file-earmark-spreadsheet fs-3"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-0">Отчет по продуктам</h6>
+                                        <small class="text-muted">Все запросы на закупку продуктов</small>
+                                    </div>
+                                </div>
+                                <a href="{{ url_for('download_product_report') }}"
+                                    class="btn btn-outline-primary btn-pill w-100 mt-auto">
+                                    Скачать Excel
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {%endif%}
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Инициализация графика Админа
+        document.addEventListener("DOMContentLoaded", function () {
+            const ctx = document.getElementById('attendanceChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница'],
+                        datasets: [{
+                            label: 'Посещаемость',
+                            data: [620, 640, 590, 650, 600],
+                            backgroundColor: '#3b82f6',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }
+        });
+
+        function downloadReport(name) {
+            alert("Генерация отчета: " + name + "...\nЗагрузка начнется автоматически.");
+        }
+    </script>
+    {% endif %}
+
+    {% if rights == 2 %}
+    <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Изменить количество</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" method="post" action="/update_inventory">
+                        <input type="hidden" id="editProductName" name="product_name">
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Текущее количество</label>
+                            <input type="number" class="form-control" id="editCurrentCount" name="current_count" min="0"
+                                step="0.1">
+                            <div class="form-text">Доступно: <span id="editMaxCount">0</span> <span
+                                    id="editSuffix"></span></div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-sm">Сохранить</button>
+                            <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Отмена</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // ============================================
+    // ОБЩИЕ СКРИПТЫ (Для Ученика и Повара)
+    // ============================================
+
+    // --- УЧЕНИК: ПОДТВЕРЖДЕНИЕ ЗАКАЗА ---
+    function confirmOrder(btn) {
+        if (confirm("Вы действительно получили еду?")) {
+            const card = document.getElementById('activeOrderCard');
+            // Меняем содержимое на успех
+            card.innerHTML = `<div class="d-flex align-items-center gap-3 text-success justify-content-center w-100"><i class="bi bi-check-circle-fill fs-3"></i><h5 class="mb-0">Приятного аппетита!</h5></div>`;
+            // Скрываем через 3 секунды
+            setTimeout(() => { card.style.display = 'none'; }, 3000);
+        }
+    }
+
+    // --- УЧЕНИК: ФИЛЬТРАЦИЯ МЕНЮ ---
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkboxes = document.querySelectorAll('.filter-checkbox');
+        const allergySwitch = document.getElementById('allergyFilter');
+        const items = document.querySelectorAll('.product-item');
+        const noResults = document.getElementById('noResults');
+
+        if (checkboxes.length > 0) {
+            function filterProducts() {
+                const activeCategories = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+                let visibleCount = 0;
+
+                items.forEach(item => {
+                    const itemCategory = item.getAttribute('data-category');
+                    const isDangerous = item.getAttribute('data-allergen') === 'true';
+
+                    const matchCategory = activeCategories.includes(itemCategory);
+                    const matchAllergy = (allergySwitch && allergySwitch.checked) ? !isDangerous : true;
+
+                    if (matchCategory && matchAllergy) {
+                        item.classList.remove('d-none');
+                        visibleCount++;
+                    } else {
+                        item.classList.add('d-none');
+                    }
+                });
+
+                if (noResults) {
+                    if (visibleCount === 0) noResults.classList.remove('d-none');
+                    else noResults.classList.add('d-none');
+                }
+            }
+
+            checkboxes.forEach(cb => cb.addEventListener('change', filterProducts));
+            if (allergySwitch) allergySwitch.addEventListener('change', filterProducts);
+
+            // Запускаем фильтрацию при загрузке
+            filterProducts();
+        }
+    });
+
+    // --- ПОВАР: ОБНОВЛЕНИЕ СКЛАДА ---
+    document.addEventListener('DOMContentLoaded', function () {
+        const editModal = document.getElementById('editModal');
+        if (editModal) {
+            editModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const productName = button.getAttribute('data-product-name');
+                const currentCount = button.getAttribute('data-current-count');
+                const maxCount = button.getAttribute('data-max-count');
+                const suffix = button.getAttribute('data-suffix');
+
+                // Заполняем форму данными
+                document.getElementById('editProductName').value = productName;
+                document.getElementById('editCurrentCount').value = currentCount;
+                document.getElementById('editMaxCount').textContent = maxCount;
+                document.getElementById('editSuffix').textContent = suffix;
+
+                // Устанавливаем максимальное значение для input
+                const inputField = document.getElementById('editCurrentCount');
+                inputField.max = maxCount;
+                inputField.setAttribute('placeholder', `Макс: ${maxCount} ${suffix}`);
+            });
+        }
+    });
+
+    // ============================================
+    // СОХРАНЕНИЕ АКТИВНОЙ ВКЛАДКИ ПРИ ПЕРЕЗАГРУЗКЕ
+    // ============================================
+
+    // Функция для сохранения активной вкладки
+    function saveActiveTab(tabId) {
+        const rights = {{ rights| tojson
+    }}; // Права из шаблона
+    localStorage.setItem(`dashboard_tab_${rights}`, tabId);
+    }
+
+    // Функция для восстановления активной вкладки
+    function restoreActiveTab() {
+        const rights = {{ rights| tojson
+    }};
+    let savedTabId = localStorage.getItem(`dashboard_tab_${rights}`);
+    if (!savedTabId) {
+        savedTabId = "begin";
+    };
+
+    // Находим кнопку вкладки по data-bs-target
+    const tabButton = document.querySelector(`[data-bs-target="#${savedTabId}"]`);
+    if (!tabButton) return;
+
+    // Находим соответствующую панель
+    const tabPane = document.querySelector(`#${savedTabId}`);
+    if (!tabPane) return;
+
+    // Проверяем, активна ли уже эта вкладка
+    if (tabButton.classList.contains('active')) return;
+
+    // Временно отключаем все transition для табов
+    const allPanes = document.querySelectorAll('.tab-pane');
+    allPanes.forEach(pane => {
+        pane.classList.add('no-transition');
+    });
+
+    // Убираем активность со всех вкладок и панелей
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        link.setAttribute('aria-selected', 'false');
+    });
+
+    document.querySelectorAll('.tab-pane').forEach(pane => {
+        pane.classList.remove('show', 'active');
+    });
+
+    // Активируем сохраненную вкладку
+    tabButton.classList.add('active');
+    tabButton.setAttribute('aria-selected', 'true');
+
+    // Активируем панель МОМЕНТАЛЬНО
+    tabPane.classList.add('show', 'active');
+
+    // Восстанавливаем transition через небольшой таймаут
+    setTimeout(() => {
+        allPanes.forEach(pane => {
+            pane.classList.remove('no-transition');
+        });
+    }, 50);
+    }
+
+    // Обработчики событий для вкладок повара
+    document.addEventListener('DOMContentLoaded', function () {
+        // Восстанавливаем активную вкладку при загрузке страницы
+        setTimeout(restoreActiveTab, 10); // Небольшая задержка для гарантии загрузки DOM
+
+        // Сохраняем активную вкладку при клике
+        document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(button => {
+            button.addEventListener('click', function () {
+                const target = this.getAttribute('data-bs-target');
+                if (target) {
+                    const tabId = target.substring(1); // Убираем символ #
+                    saveActiveTab(tabId);
+                }
+            });
+        });
+
+        // Также сохраняем при изменении через Bootstrap
+        document.querySelectorAll('[data-bs-toggle="tab"]').forEach(element => {
+            element.addEventListener('shown.bs.tab', function (event) {
+                const target = event.target.getAttribute('data-bs-target');
+                if (target) {
+                    const tabId = target.substring(1);
+                    saveActiveTab(tabId);
+                }
+            });
+        });
+    });
+
+    // Для роли админа (rights == 3) - те же обработчики, но для другой структуры
+    // (используем ту же логику, так как структура аналогична)
+
+    // Минимальный код для сохранения позиции без анимации
+    (function () {
+        // Сохраняем позицию перед обновлением
+        window.addEventListener('beforeunload', () => {
+            sessionStorage.setItem('scrollY', window.pageYOffset);
+        });
+
+        // Сохраняем при скролле (с задержкой)
+        let scrollTimer;
+        window.addEventListener('scroll', () => {
+            clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(() => {
+                sessionStorage.setItem('scrollY', window.pageYOffset);
+            }, 150);
+        });
+
+        // Восстанавливаем позицию (строго без анимации)
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedY = sessionStorage.getItem('scrollY');
+            if (savedY) {
+                // Ключевой момент: behavior: 'auto' или просто число
+                window.scrollTo(0, parseInt(savedY, 10)); // Без анимации
+            }
+        });
+    })();
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const datepicker = document.getElementById('datepicker');
+
+        // Получаем текущую дату и дату следующего дня
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        // Преобразуем дату завтра в формат YYYY-MM-DD
+        const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+        // Устанавливаем минимальную дату как завтра
+        datepicker.min = tomorrowStr;
+        datepicker.value = tomorrowStr; // Устанавливаем завтра по умолчанию
+
+        // Дополнительная валидация при изменении
+        datepicker.addEventListener('change', function () {
+            const selectedDate = new Date(this.value);
+            const todayWithoutTime = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+            if (selectedDate <= todayWithoutTime) {
+                alert('Выберите дату начиная с завтрашнего дня');
+                this.value = tomorrowStr; // Сбрасываем на завтра
+            }
+        });
+    });
+
+    // Функция для автоматического расширения текстового поля
+    function autoResize(textarea) {
+        // Сбрасываем высоту чтобы получить правильный scrollHeight
+        textarea.style.height = 'auto';
+        // Устанавливаем новую высоту
+        textarea.style.height = (textarea.scrollHeight) + 'px';
+    }
+
+    // Инициализация авторазмера при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function () {
+        const reasonTextarea = document.getElementById('reason');
+        if (reasonTextarea) {
+            // При загрузке страницы устанавливаем правильную высоту
+            autoResize(reasonTextarea);
+
+            // Обработчик для изменения высоты при вводе
+            reasonTextarea.addEventListener('input', function () {
+                autoResize(this);
+            });
+        }
+    });
+
+</script>
+
+<style>
+    .fade-in {
+        animation: fadeIn 0.5s;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .hover-primary:hover {
+        background-color: #3b82f6 !important;
+        border-color: #3b82f6 !important;
+        color: white !important;
+    }
+
+    .tab-pane.no-transition {
+        transition: none !important;
+    }
+</style>
+{% endblock %}
