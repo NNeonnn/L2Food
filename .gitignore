@@ -3,3 +3,4 @@ subscript/__pycache__
 users/*
 !users/blank
 .venv
+personal
