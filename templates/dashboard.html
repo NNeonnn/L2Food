@@ -51,7 +51,8 @@
 
     <!-- КНОПКА ФИЛЬТРОВ ДЛЯ МОБИЛЬНЫХ (стрелка слева) -->
     <div class="d-lg-none mb-3">
-        <button class="btn btn-outline-secondary rounded-pill px-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas" aria-controls="filterOffcanvas">
+        <button class="btn btn-outline-secondary rounded-pill px-4" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#filterOffcanvas" aria-controls="filterOffcanvas">
             <i class="bi bi-chevron-right me-2"></i>Фильтры и корзина
         </button>
     </div>
@@ -71,7 +72,10 @@
                         <span class="filter-group-title">КАТЕГОРИИ</span>
                         <div class="d-flex flex-column gap-2">
                             {% for i in range(allcategories|length) %}
-                            <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="{{allcategories[i]}}" checked id="c{{i + 1}}_m"><label class="form-check-label cursor-pointer" for="c{{i + 1}}_m">{{allcategories[i]}}</label></div>
+                            <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox"
+                                    value="{{allcategories[i]}}" checked id="c{{i + 1}}_m"><label
+                                    class="form-check-label cursor-pointer"
+                                    for="c{{i + 1}}_m">{{allcategories[i]}}</label></div>
                             {% endfor %}
                         </div>
                     </div>
@@ -80,7 +84,8 @@
                     <div class="mb-4">
                         <span class="filter-group-title">ЗДОРОВЬЕ</span>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="allergyFilter_m" {% if allergies %}checked{% endif %}>
+                            <input class="form-check-input" type="checkbox" id="allergyFilter_m" {% if allergies
+                                %}checked{% endif %}>
                             <label class="form-check-label fw-bold" for="allergyFilter_m">Скрыть аллергены</label>
                         </div>
                     </div>
@@ -88,9 +93,13 @@
                     <div class="p-3 bg-light rounded-3 border">
                         <small class="fw-bold text-muted">Ваши аллергены:</small>
                         <div class="d-flex gap-1 flex-wrap mt-2">
-                            {% if allergies %}{% for alg in allergies %}<span class="badge bg-danger bg-opacity-10 text-danger border border-danger">{{ alg }}</span>{% endfor %}{% else %}<span class="text-muted small">Нет данных</span>{% endif %}
+                            {% if allergies %}{% for alg in allergies %}<span
+                                class="badge bg-danger bg-opacity-10 text-danger border border-danger">{{ alg
+                                }}</span>{% endfor %}{% else %}<span class="text-muted small">Нет данных</span>{% endif
+                            %}
                         </div>
-                        <a href="{{ url_for('profile') }}" class="d-block small text-primary text-decoration-none mt-2">Изменить в профиле</a>
+                        <a href="{{ url_for('profile') }}"
+                            class="d-block small text-primary text-decoration-none mt-2">Изменить в профиле</a>
                     </div>
                     {% endif %}
                 </div>
@@ -106,7 +115,8 @@
 
                     {% if cart_items %}
                     <div class="d-flex flex-column gap-2 mb-3" style="max-height: 200px; overflow-y: auto;">
-                        <div class="d-flex justify-content-between align-items-center small text-muted border-bottom pb-1">
+                        <div
+                            class="d-flex justify-content-between align-items-center small text-muted border-bottom pb-1">
                             <span class="flex-grow-1">Товар</span>
                             <span class="text-end" style="min-width: 100px;">Кол-во и цена</span>
                         </div>
@@ -114,7 +124,8 @@
                         {% if item[1] == 1 %}
                         <div class="d-flex justify-content-between align-items-center small">
                             <span class="flex-grow-1">{{ item[0].name }}</span>
-                            <div class="d-flex align-items-center justify-content-end" style="min-width: 100px; gap: 8px;">
+                            <div class="d-flex align-items-center justify-content-end"
+                                style="min-width: 100px; gap: 8px;">
                                 <span>{{ item[1] }}</span>
                                 <span class="fw-bold">×</span>
                                 <span>{{ item[0].price }} ₽</span>
@@ -123,7 +134,8 @@
                         {% else %}
                         <div class="d-flex justify-content-between align-items-center small" style="color: red;">
                             <span class="flex-grow-1" style="color: blue;">{{ item[0].name }}</span>
-                            <div class="d-flex align-items-center justify-content-end" style="min-width: 100px; gap: 8px; color: blue;">
+                            <div class="d-flex align-items-center justify-content-end"
+                                style="min-width: 100px; gap: 8px; color: blue;">
                                 <span>{{ item[1] }}</span>
                                 <span class="fw-bold">×</span>
                                 <span>{{ item[0].price }} ₽</span>
@@ -142,9 +154,11 @@
                             <input required type="date" id="datepicker_m" name="date" class="form-control rounded-3"
                                 style="margin-left: auto; margin-right: auto; margin-bottom: 10px;"
                                 value="{{ now_date }}">
-                            <button type="submit" class="btn btn-success btn-sm rounded-pill" style="width: 100%;">Оплатить</button>
+                            <button type="submit" class="btn btn-success btn-sm rounded-pill"
+                                style="width: 100%;">Оплатить</button>
                         </form>
-                        <a href="{{ url_for('clear_cart') }}" class="btn btn-light border btn-sm rounded-pill text-danger">Очистить</a>
+                        <a href="{{ url_for('clear_cart') }}"
+                            class="btn btn-light border btn-sm rounded-pill text-danger">Очистить</a>
                     </div>
                     {% else %}
                     <div class="text-center py-3 text-muted small">
@@ -166,22 +180,20 @@
                     <div class="p-3 border-bottom">
                         <div class="mb-4">
                             <span class="filter-group-title">КАТЕГОРИИ</span>
-                            <div class="d-flex flex-column gap-2">
-                                <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="Первое" checked id="c1"><label class="form-check-label cursor-pointer" for="c1">Первое</label></div>
-                                <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="Второе" checked id="c2"><label class="form-check-label cursor-pointer" for="c2">Второе</label></div>
-                                <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="Напитки" checked id="c3"><label class="form-check-label cursor-pointer" for="c3">Напитки</label></div>
-                                <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="Салаты" checked id="c4"><label class="form-check-label cursor-pointer" for="c4">Салаты</label></div>
-                                <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="Фрукты" checked id="c5"><label class="form-check-label cursor-pointer" for="c5">Фрукты</label></div>
-                                <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="Выпечка" checked id="c6"><label class="form-check-label cursor-pointer" for="c6">Выпечка</label></div>
-                                <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="Завтрак" checked id="c7"><label class="form-check-label cursor-pointer" for="c7">Завтрак</label></div>
-                            </div>
+                            {% for i in range(allcategories|length) %}
+                            <div class="form-check" style="margin-bottom: 10px;"><input class="form-check-input filter-checkbox" type="checkbox"
+                                    value="{{allcategories[i]}}" checked id="c{{i + 1}}"><label
+                                    class="form-check-label cursor-pointer"
+                                    for="c{{i + 1}}">{{allcategories[i]}}</label></div>
+                            {% endfor %}
                         </div>
 
                         {% if rights == 1 %}
                         <div class="mb-4">
                             <span class="filter-group-title">ЗДОРОВЬЕ</span>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="allergyFilter" {% if allergies %}checked{% endif %}>
+                                <input class="form-check-input" type="checkbox" id="allergyFilter" {% if allergies
+                                    %}checked{% endif %}>
                                 <label class="form-check-label fw-bold" for="allergyFilter">Скрыть аллергены</label>
                             </div>
                         </div>
@@ -189,9 +201,13 @@
                         <div class="p-3 bg-light rounded-3 border">
                             <small class="fw-bold text-muted">Ваши аллергены:</small>
                             <div class="d-flex gap-1 flex-wrap mt-2">
-                                {% if allergies %}{% for alg in allergies %}<span class="badge bg-danger bg-opacity-10 text-danger border border-danger">{{ alg }}</span>{% endfor %}{% else %}<span class="text-muted small">Нет данных</span>{% endif %}
+                                {% if allergies %}{% for alg in allergies %}<span
+                                    class="badge bg-danger bg-opacity-10 text-danger border border-danger">{{ alg
+                                    }}</span>{% endfor %}{% else %}<span class="text-muted small">Нет данных</span>{%
+                                endif %}
                             </div>
-                            <a href="{{ url_for('profile') }}" class="d-block small text-primary text-decoration-none mt-2">Изменить в профиле</a>
+                            <a href="{{ url_for('profile') }}"
+                                class="d-block small text-primary text-decoration-none mt-2">Изменить в профиле</a>
                         </div>
                         {% endif %}
                     </div>
@@ -207,7 +223,8 @@
 
                         {% if cart_items %}
                         <div class="d-flex flex-column gap-2 mb-3" style="max-height: 200px; overflow-y: auto;">
-                            <div class="d-flex justify-content-between align-items-center small text-muted border-bottom pb-1">
+                            <div
+                                class="d-flex justify-content-between align-items-center small text-muted border-bottom pb-1">
                                 <span class="flex-grow-1">Товар</span>
                                 <span class="text-end" style="min-width: 100px;">Кол-во и цена</span>
                             </div>
@@ -215,7 +232,8 @@
                             {% if item[1] == 1 %}
                             <div class="d-flex justify-content-between align-items-center small">
                                 <span class="flex-grow-1">{{ item[0].name }}</span>
-                                <div class="d-flex align-items-center justify-content-end" style="min-width: 100px; gap: 8px;">
+                                <div class="d-flex align-items-center justify-content-end"
+                                    style="min-width: 100px; gap: 8px;">
                                     <span>{{ item[1] }}</span>
                                     <span class="fw-bold">×</span>
                                     <span>{{ item[0].price }} ₽</span>
@@ -224,7 +242,8 @@
                             {% else %}
                             <div class="d-flex justify-content-between align-items-center small" style="color: red;">
                                 <span class="flex-grow-1" style="color: blue;">{{ item[0].name }}</span>
-                                <div class="d-flex align-items-center justify-content-end" style="min-width: 100px; gap: 8px; color: blue;">
+                                <div class="d-flex align-items-center justify-content-end"
+                                    style="min-width: 100px; gap: 8px; color: blue;">
                                     <span>{{ item[1] }}</span>
                                     <span class="fw-bold">×</span>
                                     <span>{{ item[0].price }} ₽</span>
@@ -243,9 +262,11 @@
                                 <input required type="date" id="datepicker_d" name="date" class="form-control rounded-3"
                                     style="margin-left: auto; margin-right: auto; margin-bottom: 10px;"
                                     value="{{ now_date }}">
-                                <button type="submit" class="btn btn-success btn-sm rounded-pill" style="width: 100%;">Оплатить</button>
+                                <button type="submit" class="btn btn-success btn-sm rounded-pill"
+                                    style="width: 100%;">Оплатить</button>
                             </form>
-                            <a href="{{ url_for('clear_cart') }}" class="btn btn-light border btn-sm rounded-pill text-danger">Очистить</a>
+                            <a href="{{ url_for('clear_cart') }}"
+                                class="btn btn-light border btn-sm rounded-pill text-danger">Очистить</a>
                         </div>
                         {% else %}
                         <div class="text-center py-3 text-muted small">
@@ -260,83 +281,93 @@
 
         <!-- СЕТКА ТОВАРОВ (СПРАВА) -->
         <div class="col-lg-9">
-            <div class="row g-4" id="productsGrid">
+            <div id="productsGrid" class="row g-4">
                 {% if productlist %}
                 {% for category in allcategories %}
-                <h1>{{category}}</h1>
-                {% for id, item in productlist.items() %}
-                {% set ns = namespace(is_dangerous=false, danger_reason="") %}
-                {% if allergies and item.allergens %}
-                {% for prod_allergen in item.allergens %}
-                {% if prod_allergen in allergies %}
-                {% set ns.is_dangerous = true %}
-                {% set ns.danger_reason = prod_allergen %}
-                {% endif %}
-                {% endfor %}
-                {% endif %}
-                
-                {% if item.category == category %}
-                <div class="col-md-4 col-sm-6 product-item" data-category="{{ item.category }}"
-                    data-allergen="{{ 'true' if ns.is_dangerous else 'false' }}">
-                    <div class="product-card h-100 d-flex flex-column position-relative bg-white rounded-4 border overflow-hidden">
-                        {% if ns.is_dangerous %}
-                        <div class="position-absolute top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex align-items-center justify-content-center danger-overlay"
-                            style="z-index: 10; display: none;">
-                            <span class="badge bg-danger fs-6 shadow"><i class="bi bi-exclamation-triangle-fill me-1"></i> Содержит: {{ ns.danger_reason }}</span>
-                        </div>
+                <div class="col-12 category-wrapper" data-category="{{ category }}">
+                    <h1>{{ category }}</h1>
+                    <div class="row g-4">
+                        {% for id, item in productlist.items() %}
+                        {% if item.category == category %}
+                        {% set ns = namespace(is_dangerous=false, danger_reason="") %}
+                        {% if allergies and item.allergens %}
+                        {% for prod_allergen in item.allergens %}
+                        {% if prod_allergen in allergies %}
+                        {% set ns.is_dangerous = true %}
+                        {% set ns.danger_reason = prod_allergen %}
+                        {% endif %}
+                        {% endfor %}
                         {% endif %}
 
-                        <a href="{{ url_for('product_detail', id=id) }}" class="text-decoration-none text-dark">
-                            <div class="product-img-wrapper d-flex align-items-center justify-content-center bg-light"
-                                style="height: 180px;">
-                                <image src="{{ url_for('static', filename='images/products/' + id|string + '.png') }}"
-                                    style="width: 120px;"></image>
-                            </div>
-                        </a>
-
-                        <div class="p-3 d-flex flex-column flex-grow-1">
-                            <div class="text-muted small mb-1">{{ item.category }}</div>
-                            <h6 class="fw-bold mb-2 text-truncate">{{ item.name }}</h6>
-
-                            {% if item.allergens %}
-                            <div class="mb-2">
-                                {% for alg in item.allergens %}
-                                {% if alg in allergies %}
-                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger" style="font-size: 0.65rem;">{{ alg }}</span>
-                                {% else %}
-                                <span class="badge bg-light text-secondary border" style="font-size: 0.65rem;">{{ alg }}</span>
-                                {% endif %}
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-
-                            <div class="mt-auto d-flex justify-content-between align-items-center pt-2">
-                                <span class="fw-bold text-primary fs-5">{{ item.price }} ₽</span>
-                                {% if rights == 1 %}
-                                <div style="display: flex; align-items: center;">
-                                    {% for j in cart_items %}
-                                    {% if j[0]['name'] == item['name'] %}
-                                    <a href="{{ url_for('remove_from_cart', id=id) }}"
-                                        class="btn btn-sm btn-light border rounded-circle shadow-sm hover-primary d-flex align-items-center justify-content-center"
-                                        style="width: 32px; height: 32px; display: inline-block;">
-                                        -
-                                    </a>
-                                    <span style="margin: 0 8px;">{{j[1]}}</span>
-                                    {% endif %}
-                                    {% endfor %}
-                                    <a href="{{ url_for('add_to_cart', id=id) }}"
-                                        class="btn btn-sm btn-light border rounded-circle shadow-sm hover-primary d-flex align-items-center justify-content-center"
-                                        style="width: 32px; height: 32px; display: inline-block;">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </a>
+                        <div class="col-md-4 col-sm-6 product-item" data-category="{{ item.category }}"
+                            data-allergen="{{ 'true' if ns.is_dangerous else 'false' }}">
+                            <!-- содержимое карточки товара (без изменений) -->
+                            <div
+                                class="product-card h-100 d-flex flex-column position-relative bg-white rounded-4 border overflow-hidden">
+                                {% if ns.is_dangerous %}
+                                <div class="position-absolute top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex align-items-center justify-content-center danger-overlay"
+                                    style="z-index: 10; display: none;">
+                                    <span class="badge bg-danger fs-6 shadow">
+                                        <i class="bi bi-exclamation-triangle-fill me-1"></i> Содержит: {{
+                                        ns.danger_reason }}
+                                    </span>
                                 </div>
                                 {% endif %}
+
+                                <a href="{{ url_for('product_detail', id=id) }}" class="text-decoration-none text-dark">
+                                    <div class="product-img-wrapper d-flex align-items-center justify-content-center bg-light"
+                                        style="height: 180px;">
+                                        <image
+                                            src="{{ url_for('static', filename='images/products/' + id|string + '.png') }}"
+                                            style="width: 120px;"></image>
+                                    </div>
+                                </a>
+
+                                <div class="p-3 d-flex flex-column flex-grow-1">
+                                    <div class="text-muted small mb-1">{{ item.category }}</div>
+                                    <h6 class="fw-bold mb-2 text-truncate">{{ item.name }}</h6>
+
+                                    {% if item.allergens %}
+                                    <div class="mb-2">
+                                        {% for alg in item.allergens %}
+                                        {% if alg in allergies %}
+                                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger"
+                                            style="font-size: 0.65rem;">{{ alg }}</span>
+                                        {% else %}
+                                        <span class="badge bg-light text-secondary border"
+                                            style="font-size: 0.65rem;">{{ alg }}</span>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+
+                                    <div class="mt-auto d-flex justify-content-between align-items-center pt-2">
+                                        <span class="fw-bold text-primary fs-5">{{ item.price }} ₽</span>
+                                        {% if rights == 1 %}
+                                        <div style="display: flex; align-items: center;">
+                                            {% for j in cart_items %}
+                                            {% if j[0]['name'] == item['name'] %}
+                                            <a href="{{ url_for('remove_from_cart', id=id) }}"
+                                                class="btn btn-sm btn-light border rounded-circle shadow-sm hover-primary d-flex align-items-center justify-content-center"
+                                                style="width: 32px; height: 32px;">-</a>
+                                            <span style="margin: 0 8px;">{{ j[1] }}</span>
+                                            {% endif %}
+                                            {% endfor %}
+                                            <a href="{{ url_for('add_to_cart', id=id) }}"
+                                                class="btn btn-sm btn-light border rounded-circle shadow-sm hover-primary d-flex align-items-center justify-content-center"
+                                                style="width: 32px; height: 32px;">
+                                                <i class="bi bi-plus-lg"></i>
+                                            </a>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        {% endif %}
+                        {% endfor %}
                     </div>
                 </div>
-                {% endif %}
-                {% endfor %}
                 {% endfor %}
                 {% else %}
                 <div class="col-12 text-center py-5">
@@ -344,6 +375,7 @@
                 </div>
                 {% endif %}
             </div>
+
             <div id="noResults" class="text-center py-5 d-none">
                 <i class="bi bi-search fs-1 text-muted opacity-25"></i>
                 <p class="text-muted mt-3">Нет блюд, соответствующих фильтрам.</p>
@@ -652,86 +684,103 @@
 
 {% block scripts %}
 <script>
-    // ============================================
-    // ОБЩИЕ СКРИПТЫ (Для Ученика и Повара)
-    // ============================================
-
-    // --- УЧЕНИК: ПОДТВЕРЖДЕНИЕ ЗАКАЗА ---
-    function confirmOrder(btn) {
-        if (confirm("Вы действительно получили еду?")) {
-            const card = document.getElementById('activeOrderCard');
-            // Меняем содержимое на успех
-            card.innerHTML = `<div class="d-flex align-items-center gap-3 text-success justify-content-center w-100"><i class="bi bi-check-circle-fill fs-3"></i><h5 class="mb-0">Приятного аппетита!</h5></div>`;
-            // Скрываем через 3 секунды
-            setTimeout(() => { card.style.display = 'none'; }, 3000);
-        }
-    }
-
-    // --- УЧЕНИК: ФИЛЬТРАЦИЯ МЕНЮ ---
-    document.addEventListener("DOMContentLoaded", function () {
-        const checkboxes = document.querySelectorAll('.filter-checkbox');
-        const allergySwitch = document.getElementById('allergyFilter');
-        const items = document.querySelectorAll('.product-item');
-        const noResults = document.getElementById('noResults');
-
-        if (checkboxes.length > 0) {
-            function filterProducts() {
-                const activeCategories = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
-                let visibleCount = 0;
-
-                items.forEach(item => {
-                    const itemCategory = item.getAttribute('data-category');
-                    const isDangerous = item.getAttribute('data-allergen') === 'true';
-
-                    const matchCategory = activeCategories.includes(itemCategory);
-                    const matchAllergy = (allergySwitch && allergySwitch.checked) ? !isDangerous : true;
-
-                    if (matchCategory && matchAllergy) {
-                        item.classList.remove('d-none');
-                        visibleCount++;
-                    } else {
-                        item.classList.add('d-none');
-                    }
+    (function () {
+        // ---------- СИНХРОНИЗАЦИЯ ФИЛЬТРОВ (ДЕСКТОП ↔ МОБИЛЬНЫЙ) ----------
+        function syncCheckboxes() {
+            const checkboxes = document.querySelectorAll('.filter-checkbox');
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', function (e) {
+                    const value = this.value;
+                    const checked = this.checked;
+                    document.querySelectorAll(`.filter-checkbox[value="${value}"]`).forEach(other => {
+                        if (other !== this) other.checked = checked;
+                    });
+                    filterProducts(); // обновить видимость товаров
                 });
-
-                if (noResults) {
-                    if (visibleCount === 0) noResults.classList.remove('d-none');
-                    else noResults.classList.add('d-none');
-                }
-            }
-
-            checkboxes.forEach(cb => cb.addEventListener('change', filterProducts));
-            if (allergySwitch) allergySwitch.addEventListener('change', filterProducts);
-
-            // Запускаем фильтрацию при загрузке
-            filterProducts();
-        }
-    });
-
-    // --- ПОВАР: ОБНОВЛЕНИЕ СКЛАДА ---
-    document.addEventListener('DOMContentLoaded', function () {
-        const editModal = document.getElementById('editModal');
-        if (editModal) {
-            editModal.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                const productName = button.getAttribute('data-product-name');
-                const currentCount = button.getAttribute('data-current-count');
-                const maxCount = button.getAttribute('data-max-count');
-                const suffix = button.getAttribute('data-suffix');
-
-                // Заполняем форму данными
-                document.getElementById('editProductName').value = productName;
-                document.getElementById('editCurrentCount').value = currentCount;
-                document.getElementById('editMaxCount').textContent = maxCount;
-                document.getElementById('editSuffix').textContent = suffix;
-
-                // Устанавливаем максимальное значение для input
-                const inputField = document.getElementById('editCurrentCount');
-                inputField.max = maxCount;
-                inputField.setAttribute('placeholder', `Макс: ${maxCount} ${suffix}`);
             });
         }
-    });
+
+        function syncAllergySwitch() {
+            const desktopSwitch = document.getElementById('allergyFilter');
+            const mobileSwitch = document.getElementById('allergyFilter_m');
+            if (!desktopSwitch || !mobileSwitch) return;
+
+            function updateSwitches(checked) {
+                if (desktopSwitch.checked !== checked) desktopSwitch.checked = checked;
+                if (mobileSwitch.checked !== checked) mobileSwitch.checked = checked;
+                filterProducts();
+            }
+
+            desktopSwitch.addEventListener('change', e => updateSwitches(e.target.checked));
+            mobileSwitch.addEventListener('change', e => updateSwitches(e.target.checked));
+        }
+
+        // ---------- ФИЛЬТРАЦИЯ ТОВАРОВ ----------
+        function filterProducts() {
+            const checkboxes = document.querySelectorAll('.filter-checkbox');
+            const activeCategories = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            const allergySwitch = document.getElementById('allergyFilter'); // десктопный (состояние синхронизировано)
+            const hideAllergens = allergySwitch ? allergySwitch.checked : false;
+
+            const categoryWrappers = document.querySelectorAll('.category-wrapper');
+            let anyVisible = false;
+
+            categoryWrappers.forEach(wrapper => {
+                const category = wrapper.dataset.category;
+                const categoryActive = activeCategories.includes(category);
+
+                // Товары внутри категории
+                const items = wrapper.querySelectorAll('.product-item');
+                let categoryHasVisibleItems = false;
+
+                items.forEach(item => {
+                    const isDangerous = item.dataset.allergen === 'true';
+                    const visible = categoryActive && (!hideAllergens || !isDangerous);
+                    item.classList.toggle('d-none', !visible);
+                    if (visible) categoryHasVisibleItems = true;
+                });
+
+                // Скрываем всю категорию, если нет видимых товаров
+                wrapper.classList.toggle('d-none', !categoryHasVisibleItems);
+                if (categoryHasVisibleItems) anyVisible = true;
+            });
+
+            // Показываем/скрываем сообщение "ничего не найдено"
+            const noResults = document.getElementById('noResults');
+            if (noResults) {
+                noResults.classList.toggle('d-none', anyVisible);
+            }
+        }
+
+        // ---------- ИНИЦИАЛИЗАЦИЯ ----------
+        document.addEventListener('DOMContentLoaded', function () {
+            // Принудительная синхронизация мобильных чекбоксов с десктопными (на случай разных начальных состояний)
+            const desktopCheckboxes = document.querySelectorAll('.d-none.d-lg-block .filter-checkbox');
+            desktopCheckboxes.forEach(desktopCb => {
+                const value = desktopCb.value;
+                const checked = desktopCb.checked;
+                document.querySelectorAll(`.filter-checkbox[value="${value}"]`).forEach(cb => {
+                    cb.checked = checked;
+                });
+            });
+
+            // Синхронизация свитча аллергенов
+            const desktopAllergy = document.getElementById('allergyFilter');
+            const mobileAllergy = document.getElementById('allergyFilter_m');
+            if (desktopAllergy && mobileAllergy) {
+                mobileAllergy.checked = desktopAllergy.checked;
+            }
+
+            syncCheckboxes();
+            syncAllergySwitch();
+
+            // Первичная фильтрация
+            filterProducts();
+        });
+    })();
 
     // ============================================
     // СОХРАНЕНИЕ АКТИВНОЙ ВКЛАДКИ ПРИ ПЕРЕЗАГРУЗКЕ
