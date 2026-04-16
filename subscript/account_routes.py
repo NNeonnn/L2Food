@@ -80,7 +80,7 @@ def confirm_mail(): # for registration
             'phone': "",
             'rights': int(session['temp_rights']),
             'money': 0,
-            'cart': [],
+            'cart': [[], [], [], [], [], []],
             'to_take': [],
             'history': []
         })

@@ -4,6 +4,14 @@
 {% endblock %}
 
 {% block content %}
+    {% set days = [
+      {'id': 'monday', 'name': 'Понедельник'},
+      {'id': 'tuesday', 'name': 'Вторник'},
+      {'id': 'wednesday', 'name': 'Среда'},
+      {'id': 'thursday', 'name': 'Четверг'},
+      {'id': 'friday', 'name': 'Пятница'},
+      {'id': 'saturday', 'name': 'Суббота'}
+    ] %}
 <div class="container pb-5">
 
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ -->
@@ -113,36 +121,39 @@
                         <h5 class="fw-bold mb-0">Ваш заказ</h5>
                     </div>
 
-                    {% if cart_items %}
-                    <div class="d-flex flex-column gap-2 mb-3" style="max-height: 200px; overflow-y: auto;">
+                    {% if cart_items != [[], [], [], [], [], []] %}
+                    <div class="d-flex flex-column gap-2 mb-3" style="max-height: 800px; overflow-y: auto;">
                         <div
                             class="d-flex justify-content-between align-items-center small text-muted border-bottom pb-1">
                             <span class="flex-grow-1">Товар</span>
                             <span class="text-end" style="min-width: 100px;">Кол-во и цена</span>
                         </div>
-                        {% for item in cart_items %}
-                        {% if item[1] == 1 %}
-                        <div class="d-flex justify-content-between align-items-center small">
-                            <span class="flex-grow-1">{{ item[0].name }}</span>
-                            <div class="d-flex align-items-center justify-content-end"
-                                style="min-width: 100px; gap: 8px;">
-                                <span>{{ item[1] }}</span>
-                                <span class="fw-bold">×</span>
-                                <span>{{ item[0].price }} ₽</span>
+                            {% for day in range(6) %}
+                            <div style="margin-left: auto; margin-right: auto;">{{ days[day]['name'] }}</div>
+                            {% for item in cart_items[day] %}
+                            {% if item[1] == 1 %}
+                            <div class="d-flex justify-content-between align-items-center small">
+                                <span class="flex-grow-1">{{ item[0].name }}</span>
+                                <div class="d-flex align-items-center justify-content-end"
+                                    style="min-width: 100px; gap: 8px;">
+                                    <span>{{ item[1] }}</span>
+                                    <span class="fw-bold">×</span>
+                                    <span>{{ item[0].price }} ₽</span>
+                                </div>
                             </div>
-                        </div>
-                        {% else %}
-                        <div class="d-flex justify-content-between align-items-center small" style="color: red;">
-                            <span class="flex-grow-1" style="color: blue;">{{ item[0].name }}</span>
-                            <div class="d-flex align-items-center justify-content-end"
-                                style="min-width: 100px; gap: 8px; color: blue;">
-                                <span>{{ item[1] }}</span>
-                                <span class="fw-bold">×</span>
-                                <span>{{ item[0].price }} ₽</span>
+                            {% else %}
+                            <div class="d-flex justify-content-between align-items-center small" style="color: red;">
+                                <span class="flex-grow-1" style="color: blue;">{{ item[0].name }}</span>
+                                <div class="d-flex align-items-center justify-content-end"
+                                    style="min-width: 100px; gap: 8px; color: blue;">
+                                    <span>{{ item[1] }}</span>
+                                    <span class="fw-bold">×</span>
+                                    <span>{{ item[0].price }} ₽</span>
+                                </div>
                             </div>
-                        </div>
-                        {% endif %}
-                        {% endfor %}
+                            {% endif %}
+                            {% endfor %}
+                            {% endfor %}
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center border-top pt-2 mb-3">
@@ -221,14 +232,16 @@
                             <h5 class="fw-bold mb-0">Ваш заказ</h5>
                         </div>
 
-                        {% if cart_items %}
-                        <div class="d-flex flex-column gap-2 mb-3" style="max-height: 200px; overflow-y: auto;">
+                        {% if cart_items != [[], [], [], [], [], []] %}
+                        <div class="d-flex flex-column gap-2 mb-3" style="max-height: 800px; overflow-y: auto;">
                             <div
                                 class="d-flex justify-content-between align-items-center small text-muted border-bottom pb-1">
                                 <span class="flex-grow-1">Товар</span>
                                 <span class="text-end" style="min-width: 100px;">Кол-во и цена</span>
                             </div>
-                            {% for item in cart_items %}
+                            {% for day in range(6) %}
+                            <div style="margin-left: auto; margin-right: auto;">{{ days[day]['name'] }}</div>
+                            {% for item in cart_items[day] %}
                             {% if item[1] == 1 %}
                             <div class="d-flex justify-content-between align-items-center small">
                                 <span class="flex-grow-1">{{ item[0].name }}</span>
@@ -250,6 +263,7 @@
                                 </div>
                             </div>
                             {% endif %}
+                            {% endfor %}
                             {% endfor %}
                         </div>
 
@@ -279,21 +293,13 @@
             </div>
         </div>
 
-        <!-- СЕТКА ТОВАРОВ (СПРАВА) -->
 <!-- СЕТКА ТОВАРОВ (СПРАВА) - теперь аккордеон по дням -->
 <div class="col-lg-9">
   <div class="accordion" id="weekMenuAccordion">
-    {% set days = [
-      {'id': 'monday', 'name': 'Понедельник'},
-      {'id': 'tuesday', 'name': 'Вторник'},
-      {'id': 'wednesday', 'name': 'Среда'},
-      {'id': 'thursday', 'name': 'Четверг'},
-      {'id': 'friday', 'name': 'Пятница'},
-      {'id': 'saturday', 'name': 'Суббота'}
-    ] %}
 
-    {% for day in days %}
-      {% set day_menu = productlist %} <!-- GOIDA -->
+    {% for i in range(6) %}
+      {% set day = days[i] %}
+      {% set day_menu = productlist[i] %}
       <div class="accordion-item border-0 shadow-sm mb-3 rounded-4 overflow-hidden">
         <h2 class="accordion-header" id="heading{{ day.id|capitalize }}">
           <button class="accordion-button {% if not loop.first %}collapsed{% endif %} bg-white fw-bold"
@@ -376,15 +382,15 @@
                                   <span class="fw-bold text-primary fs-5">{{ item.price }} ₽</span>
                                   {% if rights == 1 %}
                                   <div style="display: flex; align-items: center;">
-                                    {% for j in cart_items %}
+                                    {% for j in cart_items[i] %}
                                       {% if j[0]['name'] == item['name'] %}
-                                      <a href="{{ url_for('remove_from_cart', id=id) }}"
+                                      <a href="{{ url_for('remove_from_cart', day=i, id=id) }}"
                                          class="btn btn-sm btn-light border rounded-circle shadow-sm hover-primary d-flex align-items-center justify-content-center"
                                          style="width: 32px; height: 32px;">-</a>
                                       <span style="margin: 0 8px;">{{ j[1] }}</span>
                                       {% endif %}
                                     {% endfor %}
-                                    <a href="{{ url_for('add_to_cart', id=id) }}"
+                                    <a href="{{ url_for('add_to_cart', day=i, id=id) }}"
                                        class="btn btn-sm btn-light border rounded-circle shadow-sm hover-primary d-flex align-items-center justify-content-center"
                                        style="width: 32px; height: 32px;">
                                       <i class="bi bi-plus-lg"></i>

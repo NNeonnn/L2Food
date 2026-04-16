@@ -8,19 +8,20 @@ from datetime import datetime
 def get_cart_objects(email):
     user = getuser(email)
     if not user or 'cart' not in user:
-        return [], 0
+        return [[], [], [], [], [], []], 0
     cart_ids = user['cart']
     all_products = getproductlist()
-    cart_items = []
+    cart_items = [[], [], [], [], [], []]
     total_price = 0
-    for item_id in cart_ids:
-        if item_id[0] in all_products:
-            item = all_products[item_id[0]]
-            cart_items.append([item, item_id[1]])
-            try:
-                total_price += int(item['price']) * item_id[1]
-            except:
-                pass
+    for day in range(6):
+        for item_id in cart_ids[day]:
+            if item_id[0] in all_products[day]:
+                item = all_products[day][item_id[0]]
+                cart_items[day].append([item, item_id[1]])
+                try:
+                    total_price += int(item['price']) * item_id[1]
+                except:
+                    pass
     return cart_items, total_price
 
 def gotfood(id):
@@ -44,34 +45,42 @@ def gotfood(id):
     setquerylist(name='student_buys.json', to=admin_qu)
     return redirect(url_for('dashboard'))
 
-def add_to_cart(id):
+def add_to_cart():
     email = getlogin()
     if email == 'placeholder':
         return redirect(url_for('login'))
+    day = int(request.args.get('day', default = -1))
+    id = int(request.args.get('id', default = -1))
+    if day == -1 or id == -1:
+        return redirect(url_for('dashboard'))
     user = getuser(email)
     if 'cart' not in user:
-        user['cart'] = []
-    for i in range(len(user['cart'])):
-        if (user['cart'][i][0] == str(id)):
-            user['cart'][i][1] += 1
+        user['cart'] = [[], [], [], [], [], []]
+    for i in range(len(user['cart'][day])):
+        if (user['cart'][day][i][0] == str(id)):
+            user['cart'][day][i][1] += 1
             setuser(email, user)
             return redirect(url_for('dashboard'))
-    user['cart'].append([str(id), 1])
+    user['cart'][day].append([str(id), 1])
     setuser(email, user)
     return redirect(url_for('dashboard'))
 
-def remove_from_cart(id):
+def remove_from_cart():
     email = getlogin()
     if email == 'placeholder':
         return redirect(url_for('login'))
+    day = int(request.args.get('day', default = -1))
+    id = int(request.args.get('id', default = -1))
+    if day == -1 or id == -1:
+        return redirect(url_for('dashboard'))
     user = getuser(email)
     if 'cart' not in user:
-        user['cart'] = []
-    for i in range(len(user['cart'])):
-        if (user['cart'][i][0] == str(id)):
-            user['cart'][i][1] -= 1
-            if user['cart'][i][1] == 0:
-                user['cart'].remove(user['cart'][i])
+        user['cart'] = [[], [], [], [], [], []]
+    for i in range(len(user['cart'][day])):
+        if (user['cart'][day][i][0] == str(id)):
+            user['cart'][day][i][1] -= 1
+            if user['cart'][day][i][1] == 0:
+                user['cart'][day].remove(user['cart'][day][i])
             setuser(email, user)
             return redirect(url_for('dashboard'))
     return redirect(url_for('dashboard'))
@@ -80,7 +89,7 @@ def clear_cart():
     email = getlogin()
     if email != 'placeholder':
         user = getuser(email)
-        user['cart'] = []
+        user['cart'] = [[], [], [], [], [], []]
         setuser(email, user)
     return redirect(url_for('dashboard'))
 
