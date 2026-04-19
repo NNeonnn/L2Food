@@ -10,7 +10,7 @@
 
     --radius-pill: 50rem;
     --radius-card: 1rem;
-    --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.05);
+    --shadow-soft: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
 }
 
 body {
@@ -22,14 +22,16 @@ body {
 
 /* === LAYOUT === */
 /* Уменьшили отступ, так как меню стало меньше */
-.navbar-spacer { height: 80px; }
+.navbar-spacer {
+    height: 80px;
+}
 
 /* === NAVIGATION (COMPACT) === */
 .navbar-floating {
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.6);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
     border-radius: var(--radius-pill);
 
     /* Уменьшенные отступы для компактности */
@@ -39,9 +41,18 @@ body {
     transition: all 0.3s ease;
 }
 
-.navbar-brand { font-size: 1.1rem; }
-.nav-link { font-size: 0.9rem; }
-.btn-sm-custom { padding: 0.4rem 1rem; font-size: 0.85rem; }
+.navbar-brand {
+    font-size: 1.1rem;
+}
+
+.nav-link {
+    font-size: 0.9rem;
+}
+
+.btn-sm-custom {
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+}
 
 /* === TYPOGRAPHY === */
 .display-title {
@@ -65,6 +76,7 @@ body {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     overflow: hidden;
 }
+
 .card-hover:hover {
     transform: translateY(-3px);
     box-shadow: var(--shadow-soft);
@@ -72,25 +84,40 @@ body {
 }
 
 /* === BUTTONS === */
-.btn-pill { border-radius: var(--radius-pill); padding: 0.6rem 1.5rem; font-weight: 600; }
-.btn-primary-custom {
-    background-color: var(--color-primary); color: white; border: none;
+.btn-pill {
+    border-radius: var(--radius-pill);
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
 }
+
+.btn-primary-custom {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+}
+
 .btn-primary-custom:hover {
-    background-color: var(--color-accent); color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    background-color: var(--color-accent);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 /* === HERO SECTION === */
 .hero-section {
     position: relative;
-    padding: 3rem 0 5rem; /* Чуть меньше отступы */
+    padding: 3rem 0 5rem;
+    /* Чуть меньше отступы */
     background: radial-gradient(circle at top right, #e0f2fe 0%, transparent 40%);
 }
 
 /* === FEATURES === */
 .feature-icon {
-    width: 50px; height: 50px; /* Чуть меньше иконки */
-    display: flex; align-items: center; justify-content: center;
+    width: 50px;
+    height: 50px;
+    /* Чуть меньше иконки */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 12px;
     background: #eff6ff;
     color: var(--color-accent);
@@ -99,7 +126,10 @@ body {
 }
 
 /* === TABS (Object Page) === */
-.nav-tabs-custom { border-bottom: 1px solid #e2e8f0; }
+.nav-tabs-custom {
+    border-bottom: 1px solid #e2e8f0;
+}
+
 .nav-tabs-custom .nav-link {
     border: none;
     color: var(--color-secondary);
@@ -107,20 +137,35 @@ body {
     padding-bottom: 1rem;
     margin-right: 1rem;
 }
+
 .nav-tabs-custom .nav-link.active {
     color: var(--color-accent);
     background: transparent;
     border-bottom: 2px solid var(--color-accent);
 }
-.nav-tabs-custom .nav-link:hover { color: var(--color-primary); }
+
+.nav-tabs-custom .nav-link:hover {
+    color: var(--color-primary);
+}
 
 /* === ACCORDION === */
-.accordion-custom .accordion-item { border: none; margin-bottom: 1rem; background: transparent; }
-.accordion-custom .accordion-button {
-    border-radius: 12px !important; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.02); font-weight: 600;
+.accordion-custom .accordion-item {
+    border: none;
+    margin-bottom: 1rem;
+    background: transparent;
 }
+
+.accordion-custom .accordion-button {
+    border-radius: 12px !important;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    font-weight: 600;
+}
+
 .accordion-custom .accordion-button:not(.collapsed) {
-    background: #eff6ff; color: var(--color-accent); box-shadow: none;
+    background: #eff6ff;
+    color: var(--color-accent);
+    box-shadow: none;
 }
 
 
@@ -129,7 +174,7 @@ body {
 .auth-card {
     overflow: hidden;
     border: 1px solid #e2e8f0;
-    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
 }
 
 .auth-bg-side {
@@ -146,10 +191,12 @@ body {
 .auth-bg-side::before {
     content: '';
     position: absolute;
-    width: 200px; height: 200px;
+    width: 200px;
+    height: 200px;
     background: rgba(59, 130, 246, 0.2);
     border-radius: 50%;
-    top: -50px; right: -50px;
+    top: -50px;
+    right: -50px;
     filter: blur(40px);
 }
 
@@ -169,7 +216,7 @@ body {
 .profile-sidebar .nav-link:hover {
     background-color: white;
     color: var(--color-primary);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
 }
 
 .profile-sidebar .nav-link.active {
@@ -179,7 +226,8 @@ body {
 }
 
 .avatar-upload {
-    width: 100px; height: 100px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     background-color: #f1f5f9;
     display: flex;
@@ -191,6 +239,7 @@ body {
     cursor: pointer;
     transition: all 0.2s;
 }
+
 .avatar-upload:hover {
     border-color: var(--color-accent);
     color: var(--color-accent);
@@ -209,7 +258,8 @@ body {
 
 @media (max-width: 992px) {
     .transform-scale-sm {
-        transform: scale(1); /* На мобильных убираем увеличение */
+        transform: scale(1);
+        /* На мобильных убираем увеличение */
         z-index: 1;
         margin-top: 1rem;
         margin-bottom: 1rem;
@@ -222,12 +272,17 @@ body {
 
 /* Контейнер карточки */
 .pricing-card-featured {
-    border: 2px solid #3b82f6;      /* Толстая синяя рамка */
-    border-radius: 24px;            /* Сильное скругление */
-    position: relative;             /* Чтобы позиционировать бейдж */
+    border: 2px solid #3b82f6;
+    /* Толстая синяя рамка */
+    border-radius: 24px;
+    /* Сильное скругление */
+    position: relative;
+    /* Чтобы позиционировать бейдж */
     background: white;
-    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15); /* Синеватая тень */
-    overflow: visible;              /* Важно! Чтобы бейдж не обрезался сверху */
+    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
+    /* Синеватая тень */
+    overflow: visible;
+    /* Важно! Чтобы бейдж не обрезался сверху */
     transition: transform 0.3s ease;
     z-index: 10;
 }
@@ -242,9 +297,11 @@ body {
 /* Бейдж сверху (Most Popular) */
 .popular-badge {
     position: absolute;
-    top: -18px;                     /* Вытаскиваем наверх */
+    top: -18px;
+    /* Вытаскиваем наверх */
     left: 50%;
-    transform: translateX(-50%);    /* Центрируем */
+    transform: translateX(-50%);
+    /* Центрируем */
     background-color: #3b82f6;
     color: white;
     padding: 6px 20px;
@@ -258,9 +315,11 @@ body {
 
 /* Темная кнопка как на картинке */
 .btn-dark-pricing {
-    background-color: #0f172a;      /* Темно-синий/Черный */
+    background-color: #0f172a;
+    /* Темно-синий/Черный */
     color: white;
-    border-radius: 50rem;           /* Таблетка */
+    border-radius: 50rem;
+    /* Таблетка */
     padding: 14px 20px;
     font-weight: 600;
     font-size: 1rem;
@@ -272,7 +331,7 @@ body {
 .btn-dark-pricing:hover {
     background-color: #1e293b;
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     color: white;
 }
 
@@ -288,8 +347,10 @@ body {
 }
 
 .check-icon-circle {
-    color: #3b82f6;                 /* Синий цвет галочки */
-    font-size: 1.4rem;              /* Размер галочки */
+    color: #3b82f6;
+    /* Синий цвет галочки */
+    font-size: 1.4rem;
+    /* Размер галочки */
     flex-shrink: 0;
 }
 
@@ -302,7 +363,8 @@ body {
     border-radius: 16px;
     border: 1px solid #e2e8f0;
     padding: 1.5rem;
-    position: sticky; /* Липкий сайдбар, едет при скролле */
+    position: sticky;
+    /* Липкий сайдбар, едет при скролле */
     top: 100px;
     height: fit-content;
 }
@@ -324,6 +386,7 @@ body {
     justify-content: space-between;
     align-items: center;
 }
+
 .form-check-custom label {
     font-size: 0.95rem;
     color: var(--color-primary);
@@ -331,6 +394,7 @@ body {
     margin-bottom: 0;
     flex-grow: 1;
 }
+
 .count-badge {
     font-size: 0.75rem;
     color: var(--color-secondary);
@@ -352,11 +416,41 @@ body {
 }
 
 /* Цвета для разных категорий */
-.tag-dev { background: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; }       /* Синий */
-.tag-design { background: #fdf2f8; color: #be185d; border: 1px solid #fce7f3; }    /* Розовый */
-.tag-marketing { background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; } /* Оранжевый */
-.tag-finance { background: #f0fdf4; color: #15803d; border: 1px solid #dcfce7; }   /* Зеленый */
-.tag-hr { background: #f5f3ff; color: #7c3aed; border: 1px solid #ede9fe; }        /* Фиолетовый */
+.tag-dev {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #dbeafe;
+}
+
+/* Синий */
+.tag-design {
+    background: #fdf2f8;
+    color: #be185d;
+    border: 1px solid #fce7f3;
+}
+
+/* Розовый */
+.tag-marketing {
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #ffedd5;
+}
+
+/* Оранжевый */
+.tag-finance {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #dcfce7;
+}
+
+/* Зеленый */
+.tag-hr {
+    background: #f5f3ff;
+    color: #7c3aed;
+    border: 1px solid #ede9fe;
+}
+
+/* Фиолетовый */
 
 /* --- COMPLEX FORM ELEMENTS --- */
 .form-select-lg-custom {
@@ -366,6 +460,7 @@ body {
     border-color: #cbd5e1;
     font-size: 0.95rem;
 }
+
 .interest-checkbox-card {
     border: 1px solid #e2e8f0;
     border-radius: 12px;
@@ -374,11 +469,13 @@ body {
     transition: all 0.2s;
     background: white;
 }
+
 .interest-checkbox-card:hover {
     border-color: var(--color-accent);
     background: #eff6ff;
 }
-.interest-checkbox-card input:checked + span {
+
+.interest-checkbox-card input:checked+span {
     color: var(--color-accent);
     font-weight: 700;
 }
@@ -389,14 +486,16 @@ body {
 .product-card {
     border: 1px solid #e2e8f0;
     border-radius: 16px;
-    overflow: hidden;
+    overflow: visible !important;
     transition: all 0.3s ease;
     background: white;
 }
+
 .product-card:hover {
-    box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
     transform: translateY(-5px);
 }
+
 .product-img-wrapper {
     height: 200px;
     background: #f1f5f9;
@@ -405,15 +504,17 @@ body {
     justify-content: center;
     position: relative;
 }
+
 .product-badge {
     position: absolute;
-    top: 10px; left: 10px;
+    top: 10px;
+    left: 10px;
     background: white;
     padding: 4px 10px;
     border-radius: 8px;
     font-size: 0.75rem;
     font-weight: 700;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* 2. SERVICE CARD (Услуга) */
@@ -425,13 +526,16 @@ body {
     text-align: center;
     transition: all 0.3s;
 }
+
 .service-card:hover {
     border-color: var(--color-accent);
     background: white;
     box-shadow: 0 10px 40px -10px rgba(59, 130, 246, 0.15);
 }
+
 .service-icon {
-    width: 64px; height: 64px;
+    width: 64px;
+    height: 64px;
     margin: 0 auto 1.5rem;
     background: #eff6ff;
     color: var(--color-accent);
@@ -446,10 +550,11 @@ body {
 .table-custom-container {
     background: white;
     border-radius: 16px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
     overflow: hidden;
     border: 1px solid #e2e8f0;
 }
+
 .table-custom thead th {
     background: #f8fafc;
     color: var(--color-secondary);
@@ -460,15 +565,18 @@ body {
     padding: 1rem 1.5rem;
     border-bottom: 1px solid #e2e8f0;
 }
+
 .table-custom tbody td {
     padding: 1rem 1.5rem;
     vertical-align: middle;
     color: var(--color-primary);
     border-bottom: 1px solid #f1f5f9;
 }
+
 .table-custom tbody tr:last-child td {
     border-bottom: none;
 }
+
 .table-custom tbody tr:hover {
     background-color: #f8fafc;
 }
@@ -484,6 +592,7 @@ a.card-link {
     display: block;
     height: 100%;
 }
+
 a.card-link:hover .product-card,
 a.card-link:hover .service-card,
 a.card-link:hover .card-hover {
@@ -521,11 +630,13 @@ a.card-link:hover .card-hover {
 
 .table-modern tbody tr {
     transition: background-color 0.2s ease;
-    cursor: pointer; /* Показываем, что можно кликнуть */
+    cursor: pointer;
+    /* Показываем, что можно кликнуть */
 }
 
 .table-modern tbody tr:hover {
-    background-color: #f1f5f9; /* Подсветка при наведении */
+    background-color: #f1f5f9;
+    /* Подсветка при наведении */
 }
 
 .table-modern tbody td {
@@ -550,13 +661,26 @@ a.card-link:hover .card-hover {
     font-weight: 600;
     text-transform: capitalize;
 }
-.status-success { background: #dcfce7; color: #166534; }
-.status-warning { background: #fef9c3; color: #854d0e; }
-.status-pending { background: #f1f5f9; color: #475569; }
+
+.status-success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-warning {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.status-pending {
+    background: #f1f5f9;
+    color: #475569;
+}
 
 /* Аватарки в таблице */
 .table-avatar {
-    width: 36px; height: 36px;
+    width: 36px;
+    height: 36px;
     border-radius: 8px;
     object-fit: cover;
     background: #e2e8f0;
@@ -570,4 +694,48 @@ html {
 /* На всякий случай, отключаем у всех элементов */
 * {
     scroll-behavior: auto !important;
+}
+
+.info-wrap {
+    position: relative;
+    display: inline-block;
+    font-family: sans-serif;
+    cursor: help;
+}
+
+.info-icon {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #999;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.info-text {
+    display: none;
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: normal;
+    z-index: 1000;
+    width: max-content;
+    max-width: 15vw;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.info-wrap:hover .info-text {
+    display: block;
 }
