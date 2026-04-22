@@ -818,6 +818,72 @@
         });
     })();
 
+// =================================================
+// СОХРАНЕНИЕ ОТКРЫТОГО ДНЯ В АККОРДЕОНЕ МЕНЮ
+// =================================================
+(function() {
+    function saveOpenDay(dayId) {
+        localStorage.setItem('openMenuDay', dayId);
+    }
+
+    function restoreOpenDay() {
+        const savedDay = localStorage.getItem('openMenuDay');
+        if (!savedDay) return;
+
+        const targetId = 'collapse' + savedDay.charAt(0).toUpperCase() + savedDay.slice(1);
+        const collapseElement = document.getElementById(targetId);
+        if (!collapseElement) return;
+
+        // Уже открыт — ничего не делаем
+        if (collapseElement.classList.contains('show')) return;
+
+        const accordion = document.getElementById('weekMenuAccordion');
+
+        // 1. Временно отключаем анимацию
+        collapseElement.classList.add('no-transition');
+        if (accordion) accordion.classList.add('no-transition');
+
+        // 2. Открываем через Bootstrap API
+        const bsCollapse = new bootstrap.Collapse(collapseElement, {
+            toggle: false,
+            parent: '#weekMenuAccordion'
+        });
+        bsCollapse.show();
+
+        // 3. Восстанавливаем анимацию через короткий промежуток
+        setTimeout(() => {
+            collapseElement.classList.remove('no-transition');
+            if (accordion) accordion.classList.remove('no-transition');
+        }, 50);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        restoreOpenDay();
+
+        // Сохраняем выбранный день при клике
+        const buttons = document.querySelectorAll('[data-bs-toggle="collapse"][data-bs-target^="#collapse"]');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const target = this.getAttribute('data-bs-target');
+                if (target) {
+                    const dayName = target.replace('#collapse', '').toLowerCase();
+                    saveOpenDay(dayName);
+                }
+            });
+        });
+
+        // И при срабатывании события Bootstrap
+        const collapses = document.querySelectorAll('.accordion-collapse');
+        collapses.forEach(collapse => {
+            collapse.addEventListener('shown.bs.collapse', function() {
+                const id = this.id;
+                const dayName = id.replace('collapse', '').toLowerCase();
+                saveOpenDay(dayName);
+            });
+        });
+    });
+})();
+
     // ============================================
     // СОХРАНЕНИЕ АКТИВНОЙ ВКЛАДКИ ПРИ ПЕРЕЗАГРУЗКЕ
     // ============================================

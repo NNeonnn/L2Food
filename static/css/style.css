@@ -739,3 +739,8 @@ html {
 .info-wrap:hover .info-text {
     display: block;
 }
+
+.accordion-collapse.no-transition,
+.accordion.no-transition .accordion-collapse {
+    transition: none !important;
+}

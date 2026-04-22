@@ -26,9 +26,9 @@ def sendmail(mail, code):
     if (Debug_mode):
         print(f"Ваш код: {code}")
         return
-    fromaddr = "school_dining@mail.ru"
+    fromaddr = "PASTE_EMAIL_HERE"
     toaddr = mail
-    mypass = "2Fbpad1vaFtJbVgl8bs4"
+    mypass = "PASTE_PASS_HERE"
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = toaddr
@@ -38,7 +38,7 @@ def sendmail(mail, code):
         scode += str(i)
     body = f"Ваш код: {code}"
     msg.attach(MIMEText(body, 'plain'))
-    server = smtplib.SMTP_SSL('smtp.mail.ru', 465)
+    server = smtplib.SMTP_SSL('smtp.mail.ru', 465) # PASTE SERVER SSL HERE
     server.login(fromaddr, mypass)
     text = msg.as_string()
     try:
