@@ -3,6 +3,7 @@
 from flask import render_template, request, redirect, url_for, send_file, session
 from subscript.filework import *
 from subscript.account_system import *
+import subscript.time_api as time_api
 from datetime import datetime
 
 def get_cart_objects(email):
@@ -187,7 +188,8 @@ def pay():
     kwargs['cart_items'] = cart_items
     kwargs['cart_total'] = cart_total
     if (request.method == 'POST'):
-        session['cart_date'] = request.form.to_dict(flat=False)['date'][0]
+        kwargs['clmonday'] = time_api.closest_monday()
+        kwargs['clsaturday'] = time_api.closest_saturday()
         return render_template('pay.html', now_date=request.form.to_dict(flat=False)['date'][0], productlist=getproductlist(), takequeries=getuser(email)['to_take'], **kwargs)
     else:
         return render_template('pay.html', now_date=session.get('cart_date', '2000-01-01'), productlist=getproductlist(), takequeries=getuser(email)['to_take'], **kwargs)

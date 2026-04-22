@@ -25,20 +25,6 @@
             </h1>
             <p class="text-secondary mb-0">
                 {% if rights == 0 %}Войдите, чтобы сделать заказ.{% endif %}
-                {% if rights == 1 %}
-                <span class="d-inline-flex align-items-center gap-2 flex-wrap">
-                    <span class="badge rounded-pill bg-light border text-dark px-3 py-2 shadow-sm"
-                        style="font-weight: 600;">
-                        <i class="bi bi-cash-coin text-success me-1"></i>
-                        Баланс:
-                        <span class="text-success fw-bold">{{ money }} ₽</span>
-                    </span>
-                    <a href="{{ url_for('payment') }}"
-                        class="btn btn-primary-custom btn-pill shadow-sm btn-sm px-3 py-2">
-                        <i class="bi bi-wallet2 me-1"></i>Пополнить
-                    </a>
-                </span>
-                {% endif %}
                 {% if rights == 2 %}Статистика, согласование закупок и отчетность.{% endif %}
             </p>
         </div>
@@ -161,13 +147,9 @@
                         <span class="fw-bold fs-5 text-primary">{{ cart_total }} ₽</span>
                     </div>
                     <div class="d-grid gap-2">
-                        <form action="{{ url_for('pay') }}" method="post">
-                            <input required type="date" id="datepicker_m" name="date" class="form-control rounded-3"
-                                style="margin-left: auto; margin-right: auto; margin-bottom: 10px;"
-                                value="{{ now_date }}">
-                            <button type="submit" class="btn btn-success btn-sm rounded-pill"
-                                style="width: 100%;">Оплатить</button>
-                        </form>
+                        <span class="text-muted">Заказ будет произведён на неделю с {{clmonday}} по {{clsaturday}}</span>
+                        <a href="{{ url_for('pay') }}"><button type="submit" class="btn btn-success btn-sm rounded-pill"
+                            style="width: 100%;">Оплатить</button></a>
                         <a href="{{ url_for('clear_cart') }}"
                             class="btn btn-light border btn-sm rounded-pill text-danger">Очистить</a>
                     </div>
@@ -273,13 +255,9 @@
                             <span class="fw-bold fs-5 text-primary">{{ cart_total }} ₽</span>
                         </div>
                         <div class="d-grid gap-2">
-                            <form action="{{ url_for('pay') }}" method="post">
-                                <input required type="date" id="datepicker_d" name="date" class="form-control rounded-3"
-                                    style="margin-left: auto; margin-right: auto; margin-bottom: 10px;"
-                                    value="{{ now_date }}">
-                                <button type="submit" class="btn btn-success btn-sm rounded-pill"
-                                    style="width: 100%;">Оплатить</button>
-                            </form>
+                            <span class="text-muted">Заказ будет произведён на неделю с {{clmonday}} по {{clsaturday}}</span>
+                            <a href="{{ url_for('pay') }}"><button type="submit" class="btn btn-success btn-sm rounded-pill"
+                                style="width: 100%;">Оплатить</button></a>
                             <a href="{{ url_for('clear_cart') }}"
                                 class="btn btn-light border btn-sm rounded-pill text-danger">Очистить</a>
                         </div>

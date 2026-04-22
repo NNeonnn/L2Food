@@ -7,6 +7,7 @@ import subscript.account_routes as account_r
 import subscript.student_routes as student_r
 import subscript.product_routes as product_r
 import subscript.admin_routes as admin_r
+import subscript.time_api as time_api
 import os
 import secrets
 from datetime import datetime
@@ -43,7 +44,7 @@ app.add_url_rule('/clear_cart', view_func=student_r.clear_cart)
 app.add_url_rule('/buy_from_cart', view_func=student_r.buy_from_cart, methods=['POST'])
 app.add_url_rule('/remove_from_cart', view_func=student_r.remove_from_cart, methods=['GET'])
 app.add_url_rule('/payment', view_func=student_r.payment, methods=['GET', 'POST'])
-app.add_url_rule('/pay', view_func=student_r.pay, methods=['GET', 'POST'])
+app.add_url_rule('/pay', view_func=student_r.pay, methods=['GET'])
 app.add_url_rule('/returnback', view_func=student_r.returnback)
 #product_routes.py
 app.add_url_rule('/product/<id>', view_func=product_r.product_detail, methods=['GET'])
@@ -80,6 +81,8 @@ def dashboard():
         cart_items, cart_total = student_r.get_cart_objects(email)
         kwargs['cart_items'] = cart_items
         kwargs['cart_total'] = cart_total
+        kwargs['clmonday'] = time_api.closest_monday()
+        kwargs['clsaturday'] = time_api.closest_saturday()
         return render_template('dashboard.html', productlist=getproductlist(), takequeries=getuser(email)['to_take'], **kwargs)
     elif (kwargs['rights'] == 2):
         balance_q = getquerylist('payment.json')

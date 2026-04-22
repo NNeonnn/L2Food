@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Регистрация{% endblock %}
 {% block content %}
+{% set days = [
+{'id': 'monday', 'name': 'Понедельник'},
+{'id': 'tuesday', 'name': 'Вторник'},
+{'id': 'wednesday', 'name': 'Среда'},
+{'id': 'thursday', 'name': 'Четверг'},
+{'id': 'friday', 'name': 'Пятница'},
+{'id': 'saturday', 'name': 'Суббота'}
+] %}
 <div class="container pb-5">
     <div class="row justify-content-center">
         <!-- ЛЕВАЯ КОЛОНКА -->
@@ -17,27 +25,55 @@
                             <h5 class="fw-bold mb-0">Ваш заказ</h5>
                         </div>
 
-                        {% if cart_items %}
-                        <div class="d-flex flex-column gap-2 mb-3" style="max-height: 200px; overflow-y: auto;">
-                            {% for item in cart_items %}
+                        {% if cart_items != [[], [], [], [], [], []] %}
+                        <div class="d-flex flex-column gap-2 mb-3" style="max-height: 800px; overflow-y: auto;">
+                            <div
+                                class="d-flex justify-content-between align-items-center small text-muted border-bottom pb-1">
+                                <span class="flex-grow-1">Товар</span>
+                                <span class="text-end" style="min-width: 100px;">Кол-во и цена</span>
+                            </div>
+                            {% for day in range(6) %}
+                            <div style="margin-left: auto; margin-right: auto;">{{ days[day]['name'] }}</div>
+                            {% for item in cart_items[day] %}
                             {% if item[1] == 1 %}
                             <div class="d-flex justify-content-between align-items-center small">
-                                <span>{{ item[0].name }} x{{ item[1] }}</span>
-                                <span class="fw-bold">{{ item[0].price }} ₽</span>
+                                <span class="flex-grow-1">{{ item[0].name }}</span>
+                                <div class="d-flex align-items-center justify-content-end"
+                                    style="min-width: 100px; gap: 8px;">
+                                    <span>{{ item[1] }}</span>
+                                    <span class="fw-bold">×</span>
+                                    <span>{{ item[0].price }} ₽</span>
+                                </div>
                             </div>
                             {% else %}
                             <div class="d-flex justify-content-between align-items-center small" style="color: red;">
-                                <span style="color: blue;">{{ item[0].name }} x{{ item[1] }}</span>
-                                <span class="fw-bold" style="color: blue;">{{ item[0].price }} ₽</span>
+                                <span class="flex-grow-1" style="color: blue;">{{ item[0].name }}</span>
+                                <div class="d-flex align-items-center justify-content-end"
+                                    style="min-width: 100px; gap: 8px; color: blue;">
+                                    <span>{{ item[1] }}</span>
+                                    <span class="fw-bold">×</span>
+                                    <span>{{ item[0].price }} ₽</span>
+                                </div>
                             </div>
                             {% endif %}
-
+                            {% endfor %}
                             {% endfor %}
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center border-top pt-2 mb-3">
                             <span class="text-muted">Итого:</span>
                             <span class="fw-bold fs-5 text-primary">{{ cart_total }} ₽</span>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <form action="{{ url_for('pay') }}" method="post">
+                                <input required type="date" id="datepicker_d" name="date" class="form-control rounded-3"
+                                    style="margin-left: auto; margin-right: auto; margin-bottom: 10px;"
+                                    value="{{ now_date }}">
+                                <button type="submit" class="btn btn-success btn-sm rounded-pill"
+                                    style="width: 100%;">Оплатить</button>
+                            </form>
+                            <a href="{{ url_for('clear_cart') }}"
+                                class="btn btn-light border btn-sm rounded-pill text-danger">Очистить</a>
                         </div>
                         {% else %}
                         <div class="text-center py-3 text-muted small">
@@ -46,51 +82,16 @@
                         {% endif %}
                     </div>
                     {% endif %}
-                    <div class="card-body p-5">
-                        <div class="bg-light rounded-3 p-4 mb-4">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <small class="text-muted d-block mb-1">Текущий баланс</small>
-                                    {% if money >= cart_total %}
-                                    <h3 class="fw-bold mb-0 text-success">{{ money }} ₽</h3>
-                                    {% else %}
-                                    <h3 class="fw-bold mb-0 text-danger">{{ money }} ₽</h3>
-                                    {% endif %}
-                                </div>
-                                <div class="text-end">
-                                    <small class="text-muted d-block mb-1">Ученик</small>
-                                    <span class="badge bg-primary bg-opacity-10 text-primary">{{ username }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <form action="{{ url_for('buy_from_cart') }}" method="post">
                         <p class="text-center">Вы оформляете заказ на...</p>
-                        <input disabled type="date" id="datepicker" class="form-control rounded-3"
-                            style="width: 300px; margin-left: auto; margin-right: auto;" value="{{ now_date }}">
-                        <input type="date" name="date" hidden value="{{ now_date }}">
+                        <span class="text-muted">Заказ будет произведён на неделю с {{clmonday}} по {{clsaturday}}</span>
                         <div style="margin-top: 5px;"></div>
-                        {% if money >= cart_total %}
                         <div style="margin-left: auto; margin-right: auto;">
                             <center><button type="submit" name="abon" value=False style="margin: 5px;"
                                     class="btn btn-success btn-sm rounded-pill">Оплатить</button></center>
                         </div>
-                        {% endif %}
-                        {% if canAbonement %}
-                        <div style="margin-left: auto; margin-right: auto;">
-                            <center><button type="submit" name="abon" value=True style="margin: 5px;"
-                                    class="btn btn-success btn-sm rounded-pill">Оплатить абонементом</button></center>
-                        </div>
-                        {% endif %}
                         <div style="margin-bottom: 20px;"></div>
                     </form>
-                    {% if money < cart_total %} <a href="{{ url_for('payment') }}" class="btn btn-sm rounded-pill"
-                        style="background-color: black; margin: 5px; max-width: 300px; margin-left:auto; margin-right: auto;">
-                        <i style="color: white" class="bi bi-wallet2 me-2"></i><span
-                            style="color: white">Пополнить</span></a>
-                        <a style="margin: 5px; margin-bottom: 20px; background-color: gainsboro; max-width: 300px; margin-left:auto; margin-right: auto;"
-                            href="{{ url_for('dashboard') }}" class="btn btn-sm rounded-pill">Вернуться</a>
-                        {% endif %}
                 </div>
             </div>
         </div>
