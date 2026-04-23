@@ -1,2 +1,12 @@
 [
+    {
+        "approved": -1,
+        "email": "a@a.a",
+        "amount": 10000
+    },
+    {
+        "approved": 0,
+        "email": "a@a.a",
+        "amount": 1213
+    }
 ]

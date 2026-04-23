@@ -428,11 +428,6 @@
                     </button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link text-secondary" data-bs-toggle="tab" data-bs-target="#admin-requests">
-                        <i class="bi bi-inbox-fill me-2"></i>Заявки на закупку
-                    </button>
-                </li>
-                <li class="nav-item">
                     <button class="nav-link text-secondary" data-bs-toggle="tab" data-bs-target="#balance-requests">
                         <i class="bi bi-cash-stack me-2"></i>Запросы на пополнение
                     </button>
@@ -483,56 +478,6 @@
                     </div>
                 </div>
 
-                <!-- 4.2 СОГЛАСОВАНИЕ ЗАКУПОК -->
-                <div class="tab-pane fade" id="admin-requests">
-                    <h5 class="fw-bold mb-3">Заявки от кухни</h5>
-
-                    <!-- История заявок -->
-                    <div class="list-group list-group-flush" id="adminRequestsList">
-                        {% for i in range(toadmin|length - 1, -1, -1) %}
-                        <div
-                            class="list-group-item px-0 border-bottom d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="fw-bold mb-0">{{ toadmin[i]["prod"] }} ({{ toadmin[i]["volume"] }})</h6>
-                                <small class="text-muted">{{ toadmin[i]["when"] }}</small>
-                                {% if toadmin[i]['desc'] %}
-                                <div class="mt-1">
-                                    <small class="text-muted">Причина: {{ toadmin[i]['desc'] }}</small>
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            {% if toadmin[i]['status'] == 0 %}
-                            <!-- Форма с кнопками для не согласованных заявок -->
-                            <form id="req-form-{{toadmin[i]['id']}}" action="{{ url_for('set_admin_query') }}"
-                                method="post">
-                                <input value="{{toadmin[i]['id']}}" type="hidden" name="id">
-                                <div class="d-flex gap-2">
-                                    <button name="result" value="1" type="submit"
-                                        class="btn btn-sm btn-success rounded-pill px-3">Согласовать</button>
-                                    <button name="result" value="-1" type="submit"
-                                        class="btn btn-sm btn-outline-danger rounded-pill px-3">Отклонить</button>
-                                </div>
-                            </form>
-                            {% elif toadmin[i]['status'] == 1 %}
-                            <span class="badge bg-success bg-opacity-10 text-success">Одобрено</span>
-                            {% elif toadmin[i]['status'] == -1 %}
-                            <span class="badge bg-danger bg-opacity-10 text-danger">Отклонено</span>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                    </div>
-
-                    {% if toadmin|length == 0 %}
-                    <div class="text-center py-5">
-                        <div class="bg-light rounded-3 p-5">
-                            <i class="bi bi-inbox fs-1 text-muted opacity-25 mb-3"></i>
-                            <h5 class="text-muted mb-2">Нет заявок</h5>
-                        </div>
-                    </div>
-                    {% endif %}
-                </div>
-
                 <!-- 4.3 ЗАПРОСЫ НА ПОПОЛНЕНИЕ БАЛАНСА -->
                 <div class="tab-pane fade" id="balance-requests">
                     <h5 class="fw-bold mb-4">Запросы на пополнение баланса</h5>
@@ -543,12 +488,28 @@
                         <div class="card border-0 shadow-sm">
                             <div class="card-body p-4">
                                 <div class="row g-4">
-                                    <!-- Левая колонка: Большая картинка для скриншотов -->
+                                    <!-- Левая колонка: чек (JPG/PDF) и кнопка скачать -->
                                     <div class="col-md-5 col-lg-4">
-                                        <div class="d-flex align-items-center justify-content-center h-100">
-                                            <img src="{{ url_for('static', filename='images/screenshots/' + i|string + '.jpg') }}"
-                                                alt="Скриншот телефона" class="img-fluid rounded-3"
-                                                style="max-width: 100%; max-height: 500px; object-fit: contain; border: 1px solid #dee2e6;">
+                                        <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                            <!-- Контейнер для изображения -->
+                                            <div class="receipt-image-wrapper mb-3" style="width: 100%; max-height: 300px; overflow: hidden;">
+                                                <img src="{{ url_for('static', filename='images/screenshots/' + i|string + '.jpg') }}"
+                                                    alt="Чек" class="img-fluid rounded-3 receipt-img"
+                                                    style="max-width: 100%; max-height: 300px; object-fit: contain; border: 1px solid #dee2e6;"
+                                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                                <!-- Заглушка PDF (показывается при ошибке загрузки jpg) -->
+                                                <div class="pdf-placeholder d-none" style="display: none;">
+                                                    <div class="bg-light rounded-3 p-4 text-center">
+                                                        <i class="bi bi-file-earmark-pdf fs-1 text-danger"></i>
+                                                        <p class="text-muted mt-2 mb-0">Чек в формате PDF</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Кнопка скачивания чека -->
+                                            <a href="{{ url_for('download_receipt', receipt_id=i) }}"
+                                            class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                                <i class="bi bi-download me-1"></i>Скачать чек
+                                            </a>
                                         </div>
                                     </div>
 
@@ -579,23 +540,19 @@
 
                                             <div class="mb-4">
                                                 <small class="text-muted d-block">Сумма пополнения:</small>
-                                                <span class="fw-bold text-primary fs-4">{{ balance_requests[i].amount }}
-                                                    ₽</span>
+                                                <span class="fw-bold text-primary fs-4">{{ balance_requests[i].amount }} ₽</span>
                                             </div>
 
                                             <!-- Кнопки действий -->
                                             {% if balance_requests[i].approved == 0 %}
                                             <div class="d-flex gap-3 mt-auto">
-                                                <form action="{{ url_for('approve_balance_req', id=i) }}" method="get"
-                                                    class="flex-fill">
+                                                <form action="{{ url_for('approve_balance_req', id=i) }}" method="get" class="flex-fill">
                                                     <button type="submit" class="btn btn-success btn-lg w-100 py-2">
                                                         <i class="bi bi-check-lg me-2"></i>Одобрить
                                                     </button>
                                                 </form>
-                                                <form action="{{ url_for('decline_balance_req', id=i) }}" method="get"
-                                                    class="flex-fill">
-                                                    <button type="submit"
-                                                        class="btn btn-outline-danger btn-lg w-100 py-2">
+                                                <form action="{{ url_for('decline_balance_req', id=i) }}" method="get" class="flex-fill">
+                                                    <button type="submit" class="btn btn-outline-danger btn-lg w-100 py-2">
                                                         <i class="bi bi-x-lg me-2"></i>Отклонить
                                                     </button>
                                                 </form>

@@ -54,6 +54,7 @@ app.add_url_rule('/download_student_report', view_func=admin_r.download_student_
 app.add_url_rule('/download_product_report', view_func=admin_r.download_product_report)
 app.add_url_rule('/approve_balance_req/<id>', view_func=admin_r.approve_balance_req)
 app.add_url_rule('/decline_balance_req/<id>', view_func=admin_r.decline_balance_req)
+app.add_url_rule('/download_receipt/<receipt_id>', view_func=admin_r.download_receipt)
 
 #@app.errorhandler(404)
 #def four04(error):
