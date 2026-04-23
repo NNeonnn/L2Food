@@ -541,7 +541,8 @@
                                                     class="list-group-item d-flex justify-content-between align-items-center">
                                                     <span>{{ productlist[i][j].name }}</span>
                                                     <div>
-                                                        <a href="{{url_for('remove_from_modal', day=i, id=j)}}" class="btn btn-sm btn-outline-danger" title="Удалить">
+                                                        <a href="{{url_for('remove_from_modal', day=i, id=j)}}"
+                                                            class="btn btn-sm btn-outline-danger" title="Удалить">
                                                             <i class="bi bi-dash-lg"></i>
                                                         </a>
                                                     </div>
@@ -549,7 +550,9 @@
                                                 {% endif %}
                                                 {% endfor %}
                                             </ul>
-                                            <button class="btn btn-sm btn-outline-success me-1" title="Добавить">
+                                            <button class="btn btn-sm btn-outline-success me-1" title="Добавить"
+                                                data-day="{{ i }}" data-category="{{ category }}"
+                                                onclick="openAddProductModal(this)">
                                                 <i class="bi bi-plus-lg"></i>
                                             </button>
                                         </div>
@@ -558,6 +561,26 @@
                                 </div>
                             </div>
                             {% endfor %}
+                        </div>
+                    </div>
+                    <!-- Модальное окно для добавления товара -->
+                    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addProductModalLabel">Добавить товар</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Закрыть"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="text" id="productSearch" class="form-control mb-3"
+                                        placeholder="Поиск товара...">
+                                    <div class="list-group" id="productList">
+                                        <!-- Динамически заполняется через JS -->
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1284,6 +1307,96 @@
             });
         }
     });
+
+// ==============================================
+// ФУНКЦИОНАЛ МОДАЛЬНОГО ДОБАВЛЕНИЯ ТОВАРА (АДМИН)
+// ==============================================
+(function() {
+    // Исходные данные меню (productlist уже передаётся в шаблон)
+    const productlist = {{ productlist | tojson | safe }};
+    
+    // Собираем список ВСЕХ уникальных товаров из всех дней
+    const allProducts = [];
+    const seen = new Set();
+    productlist.forEach(dayMenu => {
+        if (!dayMenu) return;
+        Object.entries(dayMenu).forEach(([id, prod]) => {
+            if (!seen.has(id)) {
+                seen.add(id);
+                allProducts.push({ id: id, ...prod });
+            }
+        });
+    });
+
+    // Текущие день/категория (заполняются при клике на "+")
+    let currentDay = -1;
+    let currentCategory = '';
+
+    // Функция открытия модального окна
+    window.openAddProductModal = function(btn) {
+        currentDay = parseInt(btn.dataset.day);
+        currentCategory = btn.dataset.category;
+
+        // Товары, уже добавленные в текущий день И категорию
+        const currentDayMenu = productlist[currentDay] || {};
+        const alreadyAdded = new Set();
+        Object.entries(currentDayMenu).forEach(([id, prod]) => {
+            if (prod.category === currentCategory) {
+                alreadyAdded.add(id);
+            }
+        });
+
+        // Фильтруем: только нужная категория, исключаем уже добавленные
+        const filtered = allProducts.filter(p => 
+            p.category === currentCategory && !alreadyAdded.has(p.id)
+        );
+
+        populateModal(filtered);
+        
+        const modal = new bootstrap.Modal(document.getElementById('addProductModal'));
+        modal.show();
+    };
+
+    // Заполнение списка в модальном окне
+    function populateModal(products) {
+        const list = document.getElementById('productList');
+        list.innerHTML = '';
+
+        if (products.length === 0) {
+            list.innerHTML = '<div class="text-muted p-3 text-center">Нет доступных товаров этой категории</div>';
+            return;
+        }
+
+        products.forEach(p => {
+            const item = document.createElement('a');
+            item.className = 'list-group-item list-group-item-action d-flex justify-content-between align-items-center';
+            // URL для добавления (предполагается роут /add_to_modal/<day>/<product_id>)
+            const addUrl = `/add_to_modal/${currentDay}/${p.id}`;
+            item.innerHTML = `
+                <span>
+                    ${p.name}
+                    <small class="text-muted ms-2">${p.price} ₽</small>
+                </span>
+                <a href="${addUrl}" 
+                   class="btn btn-sm btn-primary" 
+                   onclick="event.stopPropagation();">
+                   Добавить
+                </a>
+            `;
+            list.appendChild(item);
+        });
+    }
+
+    // Поиск по товарам
+    document.getElementById('productSearch').addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase();
+        const items = document.querySelectorAll('#productList .list-group-item');
+        items.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            item.style.display = text.includes(query) ? '' : 'none';
+        });
+    });
+})();
 
 </script>
 <style>

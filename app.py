@@ -54,7 +54,8 @@ app.add_url_rule('/download_product_report', view_func=admin_r.download_product_
 app.add_url_rule('/approve_balance_req/<id>', view_func=admin_r.approve_balance_req)
 app.add_url_rule('/decline_balance_req/<id>', view_func=admin_r.decline_balance_req)
 app.add_url_rule('/download_receipt/<receipt_id>', view_func=admin_r.download_receipt)
-app.add_url_rule('/remove_from_modal/<day>', view_func=admin_r.remove_from_modal)
+app.add_url_rule('/remove_from_modal/<int:day>/<int:id>', view_func=admin_r.remove_from_modal)
+app.add_url_rule('/add_to_modal/<int:day>/<int:id>', view_func=admin_r.remove_from_modal)
 
 #@app.errorhandler(404)
 #def four04(error):
