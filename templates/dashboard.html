@@ -1045,5 +1045,35 @@
     });
 
 </script>
+<style>
+/* Мобильная версия: центрированная, читаемая всплывашка описания товара */
+@media (max-width: 768px) {
+    .info-wrap .info-text {
+        min-width: 200px !important;
+        max-width: 250px !important;
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        
+        /* Центрирование относительно родительского элемента */
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        bottom: 100% !important;
+        margin-bottom: 8px;
+    }
+    
+    /* Треугольник-указатель тоже нужно поместить в центр */
+    .info-wrap .info-text::after {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+}
+
+/* Для очень маленьких экранов дополнительно уменьшаем минимальную ширину */
+@media (max-width: 480px) {
+    .info-wrap .info-text {
+        min-width: 160px !important;
+    }
+}
+</style>
 <!-- Остальные стили и скрипты из оригинального шаблона -->
 {% endblock %}
