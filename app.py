@@ -14,7 +14,7 @@ from datetime import datetime
 
 #Configs
 app = Flask(__name__)
-app.secret_key = secrets.token_hex(32)
+app.secret_key = secrets.token_hex(36)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = SESSION_PATH
