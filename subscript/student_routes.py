@@ -1,6 +1,6 @@
 #Выделенный файл для всех путей, связанных с учениками (корзина, получение заказов, оплата)
 
-from flask import render_template, request, redirect, url_for, send_file, session
+from flask import render_template, request, redirect, url_for, send_file, session, render_template_string
 from subscript.filework import *
 from subscript.account_system import *
 import subscript.time_api as time_api
@@ -100,30 +100,28 @@ def buy_from_cart():
     if email == 'placeholder' or user['rights'] != 1:
         return redirect(url_for('login'))
     sum = 0
-    if (request.form.get('abon', 'False') == 'False'):
-        for i in user['cart']:
-            sum += getproduct(int(i[0]))['price'] * i[1]
-        if (sum > user['money']):
-            return redirect(url_for('dashboard'))
-        user['money'] -= sum
     dt = getquerylist("global.json")
     nowid = dt['total_student_queries']
     dt['total_student_queries'] += 1
     setquerylist(name="global.json", to=dt)
     productlist = getproductlist()
-    names = []
-    for i in user['cart']:
-        if (i[1] == 1):
-            names.append(productlist[i[0]]['name'])
-        else:
-            names.append(f"{productlist[i[0]]['name']} x{i[1]}")
+    names = [[], [], [], [], [], []]
+    for day in range(6):
+        for i in user['cart'][day]:
+            if (i[1] == 1):
+                names[day].append(productlist[day][i[0]]['name'])
+                sum += productlist[day][i[0]]['price']
+            else:
+                names[day].append(f"{productlist[day][i[0]]['name']} x{i[1]}")
+                sum += productlist[day][i[0]]['price'] * i[1]
+    
     qu = getquerylist("student_to_povar.json")
     qu.append({
         "id": nowid,
         "products": names,
         "name": user['username'],
         "userid": email,
-        "time": f'{str(datetime.now())[11:16]}',
+        "time": f'{time_api.time()}',
         "date": f'{request.form.get("date", "Не указано")}'
     })
     setquerylist(name="student_to_povar.json", to=qu)
@@ -135,27 +133,21 @@ def buy_from_cart():
         'phone': user['phone'],
         "money": sum,
         "what": names,
-        "time": f'{str(datetime.now())[11:16]}',
-        "order_date": f'{corr_date(datetime.now().date().day)}.{corr_date(datetime.now().date().month)}.{corr_date(datetime.now().date().year)}',
+        "time": f'{time_api.date()}',
+        "order_date": f'{time_api.date()}',
         "date": f'{request.form.get("date", "Не указано")}',
         "isCooked": False,
         'isComplete': False
     })
     setquerylist(name="student_buys.json", to=admin_qu)
-    if (request.form.get('abon', 'False') == 'True'):
-        user['last_used_day'] = today_days()
-        user['last_used_hour'] = today_hour()
-    else:
-        glob = getquerylist('global.json')
-        glob['today_money'] += sum
-        setquerylist(name='global.json', to=glob)
     user['history'].append({
         "products": names,
         "time": f'{str(datetime.now())[11:16]}',
         "order_date": f'{corr_date(datetime.now().date().day)}.{corr_date(datetime.now().date().month)}.{corr_date(datetime.now().date().year)}',
-        "date": f'{request.form.get("date", "Не указано")}',
+        "date": f'',
         "money": sum
     })
+    user['money'] -= sum
     setuser(email, user)
     return redirect(url_for('clear_cart'))
 
@@ -176,7 +168,7 @@ def payment():
                 "amount": int(request.form.get('money', 0))
             })
             setquerylist(name="payment.json", to=photos)
-        return redirect(session.get('pre_previous_page', '/dashboard'))
+        return redirect(session.get('previous_page', '/dashboard'))
     return render_template('payment.html', **kwargs)
 
 def pay():
@@ -187,12 +179,9 @@ def pay():
     cart_items, cart_total = get_cart_objects(email)
     kwargs['cart_items'] = cart_items
     kwargs['cart_total'] = cart_total
-    if (request.method == 'POST'):
-        kwargs['clmonday'] = time_api.closest_monday()
-        kwargs['clsaturday'] = time_api.closest_saturday()
-        return render_template('pay.html', now_date=request.form.to_dict(flat=False)['date'][0], productlist=getproductlist(), takequeries=getuser(email)['to_take'], **kwargs)
-    else:
-        return render_template('pay.html', now_date=session.get('cart_date', '2000-01-01'), productlist=getproductlist(), takequeries=getuser(email)['to_take'], **kwargs)
+    kwargs['clmonday'] = time_api.closest_monday()
+    kwargs['clsaturday'] = time_api.closest_monday(delta = 5)
+    return render_template('pay.html', productlist=getproductlist(), takequeries=getuser(email)['to_take'], **kwargs)
 
 def returnback():
     return redirect(session.get('pre_previous_page', '/dashboard'))

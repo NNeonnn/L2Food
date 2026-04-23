@@ -12,16 +12,22 @@ def date():
     res = f'{dtn[-2:]}.{dtn[-5:-3]}.{dtn[:4]}'
     return res
 
-def closest_monday():
-    dtn = datetime.now(msk_timezone).date().today()
-    dtn += timedelta(days=(0 - dtn.weekday()) % 7)
-    dtn = str(dtn)
-    res = f'{dtn[-2:]}.{dtn[-5:-3]}.{dtn[:4]}'
+def time():
+    h = str(datetime.now(msk_timezone).hour)
+    if len(h) == 1:
+        h = '0' + h
+    m = str(datetime.now(msk_timezone).minute)
+    if len(m) == 1:
+        m = '0' + m
+    s = str(datetime.now(msk_timezone).second)
+    if len(s) == 1:
+        s = '0' + s
+    res = f'{h}:{m}:{s}'
     return res
 
-def closest_saturday():
+def closest_monday(delta = 0):
     dtn = datetime.now(msk_timezone).date().today()
-    dtn += timedelta(days=(5 - dtn.weekday()) % 7)
+    dtn += timedelta(days=((0 - dtn.weekday()) % 7 + delta))
     dtn = str(dtn)
     res = f'{dtn[-2:]}.{dtn[-5:-3]}.{dtn[:4]}'
     return res

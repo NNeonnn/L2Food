@@ -66,9 +66,8 @@ app.add_url_rule('/download_receipt/<receipt_id>', view_func=admin_r.download_re
 
 @app.before_request
 def store_current_page():
-    if request.endpoint and request.endpoint != 'static':
+    if request.endpoint and request.method == 'GET' and request.endpoint != 'static':
         if (session.get('now_page', '/') != request.url):
-            session['pre_previous_page'] = session.get('previous_page', '/dashboard')
             session['previous_page'] = session.get('now_page', '/dashboard')
             session['now_page'] = request.url
 
@@ -83,7 +82,7 @@ def dashboard():
         kwargs['cart_items'] = cart_items
         kwargs['cart_total'] = cart_total
         kwargs['clmonday'] = time_api.closest_monday()
-        kwargs['clsaturday'] = time_api.closest_saturday()
+        kwargs['clsaturday'] = time_api.closest_monday(delta = 5)
         return render_template('dashboard.html', productlist=getproductlist(), takequeries=getuser(email)['to_take'], **kwargs)
     elif (kwargs['rights'] == 2):
         balance_q = getquerylist('payment.json')
