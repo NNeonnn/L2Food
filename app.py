@@ -49,7 +49,6 @@ app.add_url_rule('/returnback', view_func=student_r.returnback)
 #product_routes.py
 app.add_url_rule('/product/<id>', view_func=product_r.product_detail, methods=['GET'])
 #admin_routes.py
-app.add_url_rule('/set_admin_query', view_func=admin_r.set_admin_query, methods=['POST'])
 app.add_url_rule('/download_student_report', view_func=admin_r.download_student_report)
 app.add_url_rule('/download_product_report', view_func=admin_r.download_product_report)
 app.add_url_rule('/approve_balance_req/<id>', view_func=admin_r.approve_balance_req)
@@ -97,14 +96,7 @@ def dashboard():
                 "phone": us['phone'],
                 "grade": us['class']
             })
-        glob = getquerylist('global.json')
-        today = glob['today']
-        if (today != today_days()):
-            glob['today'] = today_days()
-            glob['today_money'] = 0
-            setquerylist(name="global.json", to=glob)
-        return render_template('dashboard.html', admin_money=glob['today_money'], **kwargs, toadmin=[], balance_requests=balance_requests)
-
+        return render_template('dashboard.html', **kwargs, balance_requests=balance_requests, productlist=getproductlist(), globalproductlist=getglobalproductlist())
 
 #start
 if __name__ == '__main__':

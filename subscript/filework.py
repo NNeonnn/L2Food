@@ -84,6 +84,14 @@ def setproductlist(to):
     with open(f"{base_path}/products/modal.json", 'w', encoding='utf-8') as f:
         f.write(json.dumps(to, indent = 4))
 
+def getglobalproductlist():
+    with open(f"{base_path}/products/global.json", 'r', encoding='utf-8') as f:
+        return json.loads(f.read())
+
+def setglobalproductlist(to):
+    with open(f"{base_path}/products/global.json", 'w', encoding='utf-8') as f:
+        f.write(json.dumps(to, indent = 4))
+
 def does_user_exist(email):
     if os.path.exists(f'{base_path}/users/{email}.json'):
         return True

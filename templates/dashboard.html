@@ -51,11 +51,11 @@
         {% endif %}
     </div>
 
+    {% set allcategories = ['Первое', 'Второе', 'Напитки', 'Салаты', 'Фрукты', 'Выпечка', 'Завтрак'] %}
     <!-- ============================================== -->
     <!-- 2. РОЛЬ: УЧЕНИК (1) И ГОСТЬ (0) - МЕНЮ     -->
     <!-- ============================================== -->
     {% if rights == 1 or rights == 0 %}
-    {% set allcategories = ['Первое', 'Второе', 'Напитки', 'Салаты', 'Фрукты', 'Выпечка', 'Завтрак'] %}
 
     <!-- КНОПКА ФИЛЬТРОВ ДЛЯ МОБИЛЬНЫХ (стрелка слева) -->
     <div class="d-lg-none mb-3">
@@ -161,9 +161,10 @@
                         <span class="fw-bold fs-5 text-primary">{{ cart_total }} ₽</span>
                     </div>
                     <div class="d-grid gap-2">
-                        <span class="text-muted">Заказ будет произведён на неделю с {{clmonday}} по {{clsaturday}}</span>
+                        <span class="text-muted">Заказ будет произведён на неделю с {{clmonday}} по
+                            {{clsaturday}}</span>
                         <a href="{{ url_for('pay') }}"><button type="submit" class="btn btn-success btn-sm rounded-pill"
-                            style="width: 100%;">Оплатить</button></a>
+                                style="width: 100%;">Оплатить</button></a>
                         <a href="{{ url_for('clear_cart') }}"
                             class="btn btn-light border btn-sm rounded-pill text-danger">Очистить</a>
                     </div>
@@ -269,9 +270,11 @@
                             <span class="fw-bold fs-5 text-primary">{{ cart_total }} ₽</span>
                         </div>
                         <div class="d-grid gap-2">
-                            <span class="text-muted">Заказ будет произведён на неделю с {{clmonday}} по {{clsaturday}}</span>
-                            <a href="{{ url_for('pay') }}"><button type="submit" class="btn btn-success btn-sm rounded-pill"
-                                style="width: 100%;">Оплатить</button></a>
+                            <span class="text-muted">Заказ будет произведён на неделю с {{clmonday}} по
+                                {{clsaturday}}</span>
+                            <a href="{{ url_for('pay') }}"><button type="submit"
+                                    class="btn btn-success btn-sm rounded-pill"
+                                    style="width: 100%;">Оплатить</button></a>
                             <a href="{{ url_for('clear_cart') }}"
                                 class="btn btn-light border btn-sm rounded-pill text-danger">Очистить</a>
                         </div>
@@ -423,8 +426,8 @@
         <div class="card-header bg-white border-bottom pt-3 px-4">
             <ul class="nav nav-tabs card-header-tabs" role="tablist">
                 <li class="nav-item">
-                    <button class="nav-link text-secondary" data-bs-toggle="tab" data-bs-target="#stats">
-                        <i class="bi bi-bar-chart-fill me-2"></i>Статистика
+                    <button class="nav-link text-secondary" data-bs-toggle="tab" data-bs-target="#menu">
+                        <i class="bi bi-grid-3x3-gap-fill me-2"></i>Управление меню
                     </button>
                 </li>
                 <li class="nav-item">
@@ -449,31 +452,112 @@
                         приступим</h1>
                 </div>
 
-                <!-- 4.1 СТАТИСТИКА -->
-                <div class="tab-pane fade" id="stats">
-                    <!-- KPI Cards -->
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-6">
-                            <div class="card border-0 shadow-sm p-4 bg-light">
-                                <h6 class="text-muted text-uppercase small fw-bold">Выручка за день</h6>
-                                <h2 class="fw-bold text-primary mb-0">{{admin_money}} ₽</h2>
-                                <small class="text-muted"><br></small>
+                <!-- 4.1 УПРАВЛЕНИЕ МЕНЮ -->
+                <div class="tab-pane fade" id="menu">
+                    <!-- Экспорт меню -->
+                    <div class="mb-5">
+                        <h5 class="fw-bold mb-4">Экспорт меню</h5>
+                        <div class="row g-4">
+                            <!-- Меню поставщика -->
+                            <div class="col-md-6">
+                                <div class="card border-0 shadow-sm p-4 h-100">
+                                    <div class="d-flex align-items-center gap-3 mb-3">
+                                        <div class="bg-success bg-opacity-10 text-success p-3 rounded-circle">
+                                            <i class="bi bi-truck fs-3"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold mb-0">Меню поставщика</h6>
+                                            <small class="text-muted">Скачать актуальное меню для поставщика</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2 mt-auto">
+                                        <a href="url_for('download_supplier_menu')?format=xlsx"
+                                            class="btn btn-outline-success btn-pill flex-grow-1">
+                                            <i class="bi bi-file-earmark-spreadsheet me-1"></i>.xlsx
+                                        </a>
+                                        <a href="url_for('download_supplier_menu') ?format=ods"
+                                            class="btn btn-outline-success btn-pill flex-grow-1">
+                                            <i class="bi bi-file-earmark-spreadsheet me-1"></i>.ods
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card border-0 shadow-sm p-4 bg-light">
-                                <h6 class="text-muted text-uppercase small fw-bold">Посещаемость</h6>
-                                <h2 class="fw-bold text-dark mb-0">85%</h2>
-                                <small class="text-muted">640 из 750 учеников</small>
+                            <!-- Меню школы -->
+                            <div class="col-md-6">
+                                <div class="card border-0 shadow-sm p-4 h-100">
+                                    <div class="d-flex align-items-center gap-3 mb-3">
+                                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+                                            <i class="bi bi-building fs-3"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold mb-0">Меню школы</h6>
+                                            <small class="text-muted">Скачать меню для столовой на неделю</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2 mt-auto">
+                                        <a href="url_for('download_school_menu')?format=xlsx"
+                                            class="btn btn-outline-primary btn-pill flex-grow-1">
+                                            <i class="bi bi-file-earmark-spreadsheet me-1"></i>.xlsx
+                                        </a>
+                                        <a href="url_for('download_school_menu')?format=ods"
+                                            class="btn btn-outline-primary btn-pill flex-grow-1">
+                                            <i class="bi bi-file-earmark-spreadsheet me-1"></i>.ods
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- График -->
-                    <div class="card border-0 shadow-sm p-4">
-                        <h5 class="fw-bold mb-4">Динамика посещаемости (неделя)</h5>
-                        <div style="height: 300px;">
-                            <canvas id="attendanceChart"></canvas>
+                    <!-- Составление меню на модуль -->
+                    <div>
+                        <h5 class="fw-bold mb-4">Составление меню на модуль</h5>
+                        <div class="accordion" id="menuEditAccordion">
+                            {% for i in range(6) %}
+                            {% set day = days[i] %}
+                            <div class="accordion-item border-0 shadow-sm mb-3 rounded-4 overflow-hidden">
+                                <h2 class="accordion-header" id="editHeading{{ day.id|capitalize }}">
+                                    <button
+                                        class="accordion-button {% if not loop.first %}collapsed{% endif %} bg-white fw-bold"
+                                        type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#editCollapse{{ day.id|capitalize }}"
+                                        aria-expanded="{{ 'true' if loop.first else 'false' }}"
+                                        aria-controls="editCollapse{{ day.id|capitalize }}">
+                                        {{ day.name }}
+                                    </button>
+                                </h2>
+                                <div id="editCollapse{{ day.id|capitalize }}"
+                                    class="accordion-collapse collapse {% if loop.first %}show{% endif %}"
+                                    aria-labelledby="editHeading{{ day.id|capitalize }}"
+                                    data-bs-parent="#menuEditAccordion">
+                                    <div class="accordion-body p-3 p-lg-4">
+                                        {% for category in allcategories %}
+                                        <div class="mb-4">
+                                            <h5 class="fw-bold mb-3">{{ category }}</h5>
+                                            <ul class="list-group" style="padding-bottom: 10px;">
+                                                {% for j in productlist[i] %}
+                                                {% if productlist[i][j].category == category %}
+                                                <li
+                                                    class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <span>{{ category[:4] }}-блюдо {{ j }}</span>
+                                                    <div>
+                                                        <button class="btn btn-sm btn-outline-danger" title="Удалить">
+                                                            <i class="bi bi-dash-lg"></i>
+                                                        </button>
+                                                    </div>
+                                                </li>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </ul>
+                                            <button class="btn btn-sm btn-outline-success me-1" title="Добавить">
+                                                <i class="bi bi-plus-lg"></i>
+                                            </button>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -492,7 +576,8 @@
                                     <div class="col-md-5 col-lg-4">
                                         <div class="d-flex flex-column align-items-center justify-content-center h-100">
                                             <!-- Контейнер для изображения -->
-                                            <div class="receipt-image-wrapper mb-3" style="width: 100%; max-height: 300px; overflow: hidden;">
+                                            <div class="receipt-image-wrapper mb-3"
+                                                style="width: 100%; max-height: 300px; overflow: hidden;">
                                                 <img src="{{ url_for('static', filename='images/screenshots/' + i|string + '.jpg') }}"
                                                     alt="Чек" class="img-fluid rounded-3 receipt-img"
                                                     style="max-width: 100%; max-height: 300px; object-fit: contain; border: 1px solid #dee2e6;"
@@ -507,7 +592,7 @@
                                             </div>
                                             <!-- Кнопка скачивания чека -->
                                             <a href="{{ url_for('download_receipt', receipt_id=i) }}"
-                                            class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                                class="btn btn-outline-primary btn-sm rounded-pill px-3">
                                                 <i class="bi bi-download me-1"></i>Скачать чек
                                             </a>
                                         </div>
@@ -540,19 +625,23 @@
 
                                             <div class="mb-4">
                                                 <small class="text-muted d-block">Сумма пополнения:</small>
-                                                <span class="fw-bold text-primary fs-4">{{ balance_requests[i].amount }} ₽</span>
+                                                <span class="fw-bold text-primary fs-4">{{ balance_requests[i].amount }}
+                                                    ₽</span>
                                             </div>
 
                                             <!-- Кнопки действий -->
                                             {% if balance_requests[i].approved == 0 %}
                                             <div class="d-flex gap-3 mt-auto">
-                                                <form action="{{ url_for('approve_balance_req', id=i) }}" method="get" class="flex-fill">
+                                                <form action="{{ url_for('approve_balance_req', id=i) }}" method="get"
+                                                    class="flex-fill">
                                                     <button type="submit" class="btn btn-success btn-lg w-100 py-2">
                                                         <i class="bi bi-check-lg me-2"></i>Одобрить
                                                     </button>
                                                 </form>
-                                                <form action="{{ url_for('decline_balance_req', id=i) }}" method="get" class="flex-fill">
-                                                    <button type="submit" class="btn btn-outline-danger btn-lg w-100 py-2">
+                                                <form action="{{ url_for('decline_balance_req', id=i) }}" method="get"
+                                                    class="flex-fill">
+                                                    <button type="submit"
+                                                        class="btn btn-outline-danger btn-lg w-100 py-2">
                                                         <i class="bi bi-x-lg me-2"></i>Отклонить
                                                     </button>
                                                 </form>
@@ -767,71 +856,266 @@
         });
     })();
 
-// =================================================
-// СОХРАНЕНИЕ ОТКРЫТОГО ДНЯ В АККОРДЕОНЕ МЕНЮ
-// =================================================
-(function() {
-    function saveOpenDay(dayId) {
-        localStorage.setItem('openMenuDay', dayId);
-    }
+    // =================================================
+    // СОХРАНЕНИЕ ОТКРЫТОГО ДНЯ АККОРДЕОНА (включая "все закрыто")
+    // =================================================
+    (function () {
+        const STORAGE_KEY = 'openMenuDay';
+        const PARENT_ID = 'weekMenuAccordion';
 
-    function restoreOpenDay() {
-        const savedDay = localStorage.getItem('openMenuDay');
-        if (!savedDay) return;
+        // Сохраняем день или специальное значение "none", если всё закрыто
+        function saveState(dayId) {
+            localStorage.setItem(STORAGE_KEY, dayId);
+        }
 
-        const targetId = 'collapse' + savedDay.charAt(0).toUpperCase() + savedDay.slice(1);
-        const collapseElement = document.getElementById(targetId);
-        if (!collapseElement) return;
+        // Проверяем, есть ли хоть одна открытая панель аккордеона
+        function hasAnyOpenPanel() {
+            const accordion = document.getElementById(PARENT_ID);
+            if (!accordion) return false;
+            return accordion.querySelector('.accordion-collapse.show') !== null;
+        }
 
-        // Уже открыт — ничего не делаем
-        if (collapseElement.classList.contains('show')) return;
+        // Мгновенно открываем нужную панель (без анимации)
+        function openPanelInstant(collapseElement) {
+            const accordion = document.getElementById(PARENT_ID);
+            const bsCollapse = bootstrap.Collapse.getInstance(collapseElement)
+                || new bootstrap.Collapse(collapseElement, { toggle: false, parent: `#${PARENT_ID}` });
 
-        const accordion = document.getElementById('weekMenuAccordion');
+            collapseElement.classList.add('no-transition');
+            if (accordion) accordion.classList.add('no-transition');
+            bsCollapse.show();
+            setTimeout(() => {
+                collapseElement.classList.remove('no-transition');
+                if (accordion) accordion.classList.remove('no-transition');
+            }, 50);
+        }
 
-        // 1. Временно отключаем анимацию
-        collapseElement.classList.add('no-transition');
-        if (accordion) accordion.classList.add('no-transition');
+        // Восстанавливаем состояние
+        function restoreState() {
+            const savedDay = localStorage.getItem(STORAGE_KEY);
+            const accordion = document.getElementById(PARENT_ID);
+            if (!accordion) return;
 
-        // 2. Открываем через Bootstrap API
-        const bsCollapse = new bootstrap.Collapse(collapseElement, {
-            toggle: false,
-            parent: '#weekMenuAccordion'
-        });
-        bsCollapse.show();
+            // Если сохранено "none" – закрываем ВСЕ открытые панели
+            if (savedDay === 'none') {
+                const openPanels = accordion.querySelectorAll('.accordion-collapse.show');
+                openPanels.forEach(panel => {
+                    const bsCollapse = bootstrap.Collapse.getInstance(panel);
+                    if (bsCollapse) bsCollapse.hide();
+                    else panel.classList.remove('show'); // fallback
+                    // Снимаем активность с кнопки
+                    const trigger = document.querySelector(`[data-bs-target="#${panel.id}"]`);
+                    if (trigger) {
+                        trigger.classList.add('collapsed');
+                        trigger.setAttribute('aria-expanded', 'false');
+                    }
+                });
+                return;
+            }
 
-        // 3. Восстанавливаем анимацию через короткий промежуток
-        setTimeout(() => {
-            collapseElement.classList.remove('no-transition');
-            if (accordion) accordion.classList.remove('no-transition');
-        }, 50);
-    }
+            // Если нет сохранённого дня, оставляем как есть (по умолчанию открыт первый)
+            if (!savedDay) return;
 
-    document.addEventListener('DOMContentLoaded', function() {
-        restoreOpenDay();
+            // Формируем ID панели
+            const targetId = 'collapse' + savedDay.charAt(0).toUpperCase() + savedDay.slice(1);
+            const collapseElement = document.getElementById(targetId);
+            if (!collapseElement) return;
 
-        // Сохраняем выбранный день при клике
-        const buttons = document.querySelectorAll('[data-bs-toggle="collapse"][data-bs-target^="#collapse"]');
-        buttons.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const target = this.getAttribute('data-bs-target');
-                if (target) {
-                    const dayName = target.replace('#collapse', '').toLowerCase();
-                    saveOpenDay(dayName);
+            // Уже открыт – ничего не делаем
+            if (collapseElement.classList.contains('show')) return;
+
+            // Мгновенно открываем (сначала закрываем все остальные)
+            openPanelInstant(collapseElement);
+        }
+
+        // Подписываемся на события Bootstrap
+        function bindEvents() {
+            const accordion = document.getElementById(PARENT_ID);
+            if (!accordion) return;
+
+            // Отслеживаем открытие панели
+            accordion.addEventListener('shown.bs.collapse', function (event) {
+                const panelId = event.target.id; // collapseMonday
+                if (panelId.startsWith('collapse')) {
+                    const dayName = panelId.replace('collapse', '').toLowerCase();
+                    saveState(dayName);
                 }
             });
-        });
 
-        // И при срабатывании события Bootstrap
-        const collapses = document.querySelectorAll('.accordion-collapse');
-        collapses.forEach(collapse => {
-            collapse.addEventListener('shown.bs.collapse', function() {
-                const id = this.id;
-                const dayName = id.replace('collapse', '').toLowerCase();
-                saveOpenDay(dayName);
+            // Отслеживаем закрытие панели
+            accordion.addEventListener('hidden.bs.collapse', function (event) {
+                // Небольшая задержка, чтобы дождаться завершения всех переходов
+                setTimeout(() => {
+                    if (!hasAnyOpenPanel()) {
+                        saveState('none');
+                    }
+                }, 50);
             });
+
+            // Дополнительно: сохраняем состояние при клике (на случай, если Bootstrap ещё не отработал)
+            accordion.addEventListener('click', function (e) {
+                const btn = e.target.closest('[data-bs-toggle="collapse"]');
+                if (!btn) return;
+                const targetSelector = btn.getAttribute('data-bs-target');
+                if (!targetSelector) return;
+                const panel = document.querySelector(targetSelector);
+                if (!panel) return;
+
+                // Если кнопка уже активна (aria-expanded="true") — скоро закроется
+                const isCurrentlyOpen = btn.getAttribute('aria-expanded') === 'true';
+                if (isCurrentlyOpen) {
+                    // Предполагаем, что после клика эта панель закроется.
+                    // Проверяем, останутся ли другие открытые.
+                    // Т.к. аккордеон с parent, может быть только одна открытая,
+                    // значит закроется единственная — сохраняем "none"
+                    setTimeout(() => {
+                        if (!hasAnyOpenPanel()) {
+                            saveState('none');
+                        }
+                    }, 150);
+                }
+            });
+        }
+
+        // Инициализация при загрузке DOM
+        document.addEventListener('DOMContentLoaded', function () {
+            restoreState();
+            bindEvents();
         });
-    });
-})();
+    })();
+
+    // =================================================
+    // СОХРАНЕНИЕ ОТКРЫТОГО ДНЯ В АККОРДЕОНЕ АДМИНКИ
+    // =================================================
+    (function () {
+        const ACCORDION_ID = 'menuEditAccordion';
+        const STORAGE_KEY = 'openAdminMenuDay';
+        const NONE_VALUE = 'none';   // обозначает "все панели закрыты"
+
+        function saveOpenAdminDay(dayId) {
+            localStorage.setItem(STORAGE_KEY, dayId);
+        }
+
+        function restoreOpenAdminDay() {
+            const savedDay = localStorage.getItem(STORAGE_KEY);
+            if (!savedDay) return;   // ничего не сохранено – оставляем как есть (первая открыта)
+
+            const accordion = document.getElementById(ACCORDION_ID);
+            if (!accordion) return;
+
+            // Если сохранено "все закрыты", закрываем все открытые панели без анимации
+            if (savedDay === NONE_VALUE || savedDay.trim() === '') {
+                const openCollapses = accordion.querySelectorAll('.accordion-collapse.show');
+                if (openCollapses.length === 0) return;
+
+                // Отключаем анимацию
+                accordion.classList.add('no-transition');
+                openCollapses.forEach(collapse => {
+                    collapse.classList.add('no-transition');
+                    const bsCollapse = bootstrap.Collapse.getInstance(collapse);
+                    if (bsCollapse) {
+                        bsCollapse.hide();
+                    } else {
+                        // На всякий случай убираем классы вручную
+                        collapse.classList.remove('show');
+                        const headerButton = document.querySelector(`[data-bs-target="#${collapse.id}"]`);
+                        if (headerButton) {
+                            headerButton.classList.add('collapsed');
+                            headerButton.setAttribute('aria-expanded', 'false');
+                        }
+                    }
+                });
+                // Восстанавливаем анимацию
+                setTimeout(() => {
+                    accordion.classList.remove('no-transition');
+                    openCollapses.forEach(c => c.classList.remove('no-transition'));
+                }, 50);
+                return;
+            }
+
+            // Иначе пробуем открыть нужный день
+            const targetId = 'editCollapse' + savedDay.charAt(0).toUpperCase() + savedDay.slice(1);
+            const collapseElement = document.getElementById(targetId);
+            if (!collapseElement) return;
+
+            // Если уже открыт – ничего не делаем
+            if (collapseElement.classList.contains('show')) return;
+
+            // Временно отключаем анимацию
+            collapseElement.classList.add('no-transition');
+            accordion.classList.add('no-transition');
+
+            const bsCollapse = new bootstrap.Collapse(collapseElement, {
+                toggle: false,
+                parent: '#' + ACCORDION_ID
+            });
+            bsCollapse.show();
+
+            setTimeout(() => {
+                collapseElement.classList.remove('no-transition');
+                accordion.classList.remove('no-transition');
+            }, 50);
+        }
+
+        // Проверяем, все ли панели закрыты сейчас
+        function areAllPanelsClosed() {
+            const accordion = document.getElementById(ACCORDION_ID);
+            if (!accordion) return true;
+            const openCollapses = accordion.querySelectorAll('.accordion-collapse.show');
+            return openCollapses.length === 0;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            restoreOpenAdminDay();
+
+            const accordion = document.getElementById(ACCORDION_ID);
+            if (!accordion) return;
+
+            // Сохраняем при открытии панели
+            accordion.addEventListener('shown.bs.collapse', function (event) {
+                const collapseId = event.target.id; // например, editCollapseMonday
+                const dayName = collapseId.replace('editCollapse', '').toLowerCase();
+                saveOpenAdminDay(dayName);
+            });
+
+            // Сохраняем "все закрыто", если после закрытия панели ничего не открыто
+            accordion.addEventListener('hidden.bs.collapse', function (event) {
+                // Даём браузеру мгновение, чтобы классы обновились (на всякий случай)
+                setTimeout(() => {
+                    if (areAllPanelsClosed()) {
+                        saveOpenAdminDay(NONE_VALUE);
+                    }
+                }, 10);
+            });
+
+            // Также реагируем на клики по кнопкам для мгновенной реакции
+            const buttons = accordion.querySelectorAll('[data-bs-toggle="collapse"]');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const target = this.getAttribute('data-bs-target');
+                    if (!target) return;
+                    const collapse = document.querySelector(target);
+                    if (!collapse) return;
+
+                    // Если эта панель уже открыта, значит клик закроет её, и мы попадём в hidden
+                    if (collapse.classList.contains('show')) {
+                        // Дождёмся закрытия и проверим
+                        setTimeout(() => {
+                            if (areAllPanelsClosed()) {
+                                saveOpenAdminDay(NONE_VALUE);
+                            }
+                            // Если открылась другая панель, shown обновит сохранение автоматически
+                        }, 100);
+                    } else {
+                        // Панель откроется, shown обновит сохранение
+                    }
+                });
+            });
+
+            // Дополнительно: если пользователь закрывает панель через кнопку, которая не является toggle'ом Bootstrap
+            // это уже покрыто событиями shown/hidden.
+        });
+    })();
 
     // ============================================
     // СОХРАНЕНИЕ АКТИВНОЙ ВКЛАДКИ ПРИ ПЕРЕЗАГРУЗКЕ
@@ -1003,34 +1287,34 @@
 
 </script>
 <style>
-/* Мобильная версия: центрированная, читаемая всплывашка описания товара */
-@media (max-width: 768px) {
-    .info-wrap .info-text {
-        min-width: 200px !important;
-        max-width: 250px !important;
-        white-space: normal !important;
-        word-wrap: break-word !important;
-        
-        /* Центрирование относительно родительского элемента */
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        bottom: 100% !important;
-        margin-bottom: 8px;
-    }
-    
-    /* Треугольник-указатель тоже нужно поместить в центр */
-    .info-wrap .info-text::after {
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-    }
-}
+    /* Мобильная версия: центрированная, читаемая всплывашка описания товара */
+    @media (max-width: 768px) {
+        .info-wrap .info-text {
+            min-width: 200px !important;
+            max-width: 250px !important;
+            white-space: normal !important;
+            word-wrap: break-word !important;
 
-/* Для очень маленьких экранов дополнительно уменьшаем минимальную ширину */
-@media (max-width: 480px) {
-    .info-wrap .info-text {
-        min-width: 160px !important;
+            /* Центрирование относительно родительского элемента */
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            bottom: 100% !important;
+            margin-bottom: 8px;
+        }
+
+        /* Треугольник-указатель тоже нужно поместить в центр */
+        .info-wrap .info-text::after {
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+        }
     }
-}
+
+    /* Для очень маленьких экранов дополнительно уменьшаем минимальную ширину */
+    @media (max-width: 480px) {
+        .info-wrap .info-text {
+            min-width: 160px !important;
+        }
+    }
 </style>
 <!-- Остальные стили и скрипты из оригинального шаблона -->
 {% endblock %}

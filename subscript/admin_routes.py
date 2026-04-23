@@ -5,26 +5,6 @@ from subscript.filework import *
 from subscript.account_system import *
 from subscript.reports import *
 
-def set_admin_query():
-    email = getlogin()
-    user = getuser(email)
-    if email == 'placeholder' or user['rights'] != 2:
-        return redirect(url_for('login'))
-    data = request.form.to_dict(flat=False)
-    qu = getquerylist("povar_to_admin.json")
-    for i in range(len(qu)):
-        if (qu[i]['id'] == int(data['id'][0])):
-            qu[i]['status'] = int(data['result'][0])
-            if int(data['result'][0]) == 1:
-                products = getproductlist()
-                for j in products:
-                    if (products[j]['name'] == qu[i]['prod']):
-                        products[j]['cnt'] += qu[i]['volumeint']
-                        setproductlist(products)
-            break
-    setquerylist(name="povar_to_admin.json", to=qu)
-    return redirect(url_for('dashboard'), 302)
-
 
 def download_receipt(receipt_id):
     """
