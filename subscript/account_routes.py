@@ -21,7 +21,11 @@ def login():
             if getuser(input_email) != False and verify_password(getuser(input_email)['password'], input_password):
                 setlogin(input_email)
                 return redirect(url_for('profile'), 302)
+            else:
+                # Неверный email или пароль
+                return render_template('login.html', wrong=True, **commonkwargs(email))
         else:
+            # Поля не заполнены
             return render_template('login.html', wrong=True, **commonkwargs(email))
     return render_template('login.html', wrong=False, **commonkwargs(email))
 
