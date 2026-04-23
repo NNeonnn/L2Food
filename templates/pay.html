@@ -82,6 +82,32 @@
                         {% endif %}
                     </div>
                     {% endif %}
+                    <div class="card-body p-5">
+                        <div class="bg-light rounded-3 p-4 mb-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <small class="text-muted d-block mb-1">Текущий баланс</small>
+                                    {% if money >= cart_total %}
+                                    <h3 class="fw-bold mb-0 text-success">{{ money }} ₽</h3>
+                                    {% else %}
+                                    <h3 class="fw-bold mb-0 text-danger">{{ money }} ₽</h3>
+                                    {% endif %}
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-muted d-block mb-1">Ученик</small>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary">{{ username }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% if money < cart_total %} <a href="{{ url_for('payment') }}" class="btn btn-sm rounded-pill"
+                        style="background-color: black; margin: 5px; max-width: 300px; margin-left:auto; margin-right: auto;">
+                        <i style="color: white" class="bi bi-wallet2 me-2"></i><span
+                            style="color: white">Пополнить</span></a>
+                        <a style="margin: 5px; margin-bottom: 20px; background-color: gainsboro; max-width: 300px; margin-left:auto; margin-right: auto;"
+                            href="{{ url_for('dashboard') }}" class="btn btn-sm rounded-pill">Вернуться</a>
+                    {% endif %}
+                    {% if money >= cart_total %}
                     <form action="{{ url_for('buy_from_cart') }}" method="post">
                         <p class="text-center">Вы оформляете заказ на...</p>
                         <span class="text-muted">Заказ будет произведён на неделю с {{clmonday}} по {{clsaturday}}</span>
@@ -92,6 +118,7 @@
                         </div>
                         <div style="margin-bottom: 20px;"></div>
                     </form>
+                    {% endif %}
                 </div>
             </div>
         </div>

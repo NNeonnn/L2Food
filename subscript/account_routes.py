@@ -74,7 +74,7 @@ def confirm_mail(): # for registration
             'last_name': session.get('temp_last_name', ''),
             'first_name': session.get('temp_first_name', ''),
             'middle_name': session.get('temp_middle_name', ''),
-
+            'money': 0,
             'class': "",
             'description': "",
             'phone': "",
