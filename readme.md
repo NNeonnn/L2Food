@@ -10,7 +10,8 @@ RU:
 
 Инструкции к установке и запуску:
 - Поставьте интерпретатор Python 3.14.2 и менеджер пакетов pip
-- Поставьте требуемые библиотеки для работы веб-приложения через pip (см. список в requirements.txt)
+- Поставьте требуемые библиотеки для работы веб-приложения через pip (см. список в requirements.txt):
+    Введите в вашей консоли "pip install -r requirements.txt" без кавычек находясь в папке с проектом.
 - Запустите через Python программу app.py
 - Откройте [http:](http://127.0.0.1:5237/) в браузере.
 
@@ -27,6 +28,7 @@ The web application is written in the Python 3 programming language due to its f
 Installation and launch instructions:
 
 - Install the Python 3.14.2 interpreter and the pip package manager.
-- Install the required libraries for the web application via pip (see the list in requirements.txt).
+- Install the required libraries for the web application via pip (see the list in requirements.txt):
+    Enter "pip install -r requirements.txt" in your console without quotes while in the project folder.
 - Launch the app.py program via Python.
 - Open [http:](http://127.0.0.1:5237/) in your browser.
