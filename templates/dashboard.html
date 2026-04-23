@@ -539,11 +539,11 @@
                                                 {% if productlist[i][j].category == category %}
                                                 <li
                                                     class="list-group-item d-flex justify-content-between align-items-center">
-                                                    <span>{{ category[:4] }}-блюдо {{ j }}</span>
+                                                    <span>{{ productlist[i][j].name }}</span>
                                                     <div>
-                                                        <button class="btn btn-sm btn-outline-danger" title="Удалить">
+                                                        <a href="{{url_for('remove_from_modal', day=i, id=j)}}" class="btn btn-sm btn-outline-danger" title="Удалить">
                                                             <i class="bi bi-dash-lg"></i>
-                                                        </button>
+                                                        </a>
                                                     </div>
                                                 </li>
                                                 {% endif %}

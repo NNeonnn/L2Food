@@ -5,6 +5,19 @@ from subscript.filework import *
 from subscript.account_system import *
 from subscript.reports import *
 
+def remove_from_modal(day):
+    day = int(day)
+    id = request.args.get('id', default=-1, type=int)
+    email = getlogin()
+    if email == 'placeholder':
+        return redirect(url_for('dashboard'), 302)
+    user_data = getuser(email)
+    if not user_data or user_data.get('rights', 0) < 2:
+        return redirect(url_for('dashboard'), 302)
+    modal = getproductlist()
+    modal[day].pop(str(id))
+    setproductlist(modal)
+    return redirect(url_for('dashboard'), 302)
 
 def download_receipt(receipt_id):
     """
