@@ -5,4 +5,5 @@ from subscript.filework import *
 from subscript.account_system import *
 
 def landing():
-    return render_template('landing.html', **commonkwargs(getlogin()))
+    user = User()
+    return render_template('landing.html', **user.kwargs())

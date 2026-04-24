@@ -84,7 +84,6 @@ def confirm_mail(): # for registration
             'phone': "",
             'rights': int(session['temp_rights']),
             'cart': [[], [], [], [], [], []],
-            'to_take': [],
             'history': []
         })
         # session['temp_password'] = False

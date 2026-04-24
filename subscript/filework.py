@@ -10,39 +10,12 @@ SESSION_PATH = f'{base_path}/sessions'
 #Осторожно, костыль. [:-10] возвращает корневую папку всего проекта, несмотря на то, что этот файл лежит в папке subscript
 #Возможно есть решение покрасивее. Но это тоже работает.
 
-def corr_date(i):
-    if (i < 10):
-        return '0' + str(i)
-    else:
-        return str(i)
-
 def return_image(path, placeholder):
     full_path = f"{base_path}/static/images/{path}.jpg"
     if os.path.exists(full_path):
         return f'images/{path}.jpg'
     else:
         return f'images/common/{placeholder}.jpg'
-
-def commonkwargs(email):
-    if (getuser(email) != False):
-        user = getuser(email)
-        ans = dict()
-        ans['userimg'] = return_image(f'users/{email}', 'user_placeholder')
-        for u in user:
-            if (u != 'password'):
-                ans[u] = user[u]
-        return ans
-    else:
-        return {'username': 'Log in', 'userimg': return_image(f'users/{email}', 'user_placeholder'), \
-            'description': 'empty', 'phone': 'N/A', 'class': 'N/A', 'rights': 0, 'money': 0, 'abonement': 'null'}
-
-def today_days():
-    today = date.today()
-    epoch_date = date(1970, 1, 1)
-    return (today - epoch_date).days
-
-def today_hour():
-    return datetime.now().hour
 
 def getuser(email):
     users_path = f"{base_path}/users/{email}.json"

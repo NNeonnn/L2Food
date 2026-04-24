@@ -38,7 +38,6 @@ app.add_url_rule('/login_wout_pass', view_func=account_r.login_wout_pass, method
 app.add_url_rule('/confirm_login_mail', view_func=account_r.confirm_login_mail, methods=['GET', 'POST'])
 app.add_url_rule('/choose', view_func=account_r.choose)
 #student_routes.py
-app.add_url_rule("/got_food/<id>", view_func=student_r.gotfood, methods=['POST'])
 app.add_url_rule('/add_to_cart', view_func=student_r.add_to_cart, methods=['GET'])
 app.add_url_rule('/clear_cart', view_func=student_r.clear_cart)
 app.add_url_rule('/buy_from_cart', view_func=student_r.buy_from_cart, methods=['POST'])
@@ -46,8 +45,6 @@ app.add_url_rule('/remove_from_cart', view_func=student_r.remove_from_cart, meth
 app.add_url_rule('/payment', view_func=student_r.payment, methods=['GET', 'POST'])
 app.add_url_rule('/pay', view_func=student_r.pay, methods=['GET'])
 app.add_url_rule('/returnback', view_func=student_r.returnback)
-#product_routes.py
-app.add_url_rule('/product/<id>', view_func=product_r.product_detail, methods=['GET'])
 #admin_routes.py
 app.add_url_rule('/download_student_report', view_func=admin_r.download_student_report)
 app.add_url_rule('/download_product_report', view_func=admin_r.download_product_report)
@@ -74,18 +71,18 @@ def store_current_page():
 
 @app.route('/dashboard')
 def dashboard():
-    email = getlogin()
-    kwargs = commonkwargs(email)
-    if (kwargs['rights'] == 0):
-        return render_template('dashboard.html', productlist=getproductlist(), **kwargs)
-    elif (kwargs['rights'] == 1):
-        cart_items, cart_total = student_r.get_cart_objects(email)
+    user = User()
+    if (not user.exists()):
+        return render_template('dashboard.html', productlist=getproductlist(), **user.kwargs())
+    elif (user.data['rights'] == 1):
+        cart_items, cart_total = student_r.get_cart_objects(user)
+        kwargs = user.kwargs()
         kwargs['cart_items'] = cart_items
         kwargs['cart_total'] = cart_total
         kwargs['clmonday'] = time_api.closest_monday()
         kwargs['clsaturday'] = time_api.closest_monday(delta = 5)
-        return render_template('dashboard.html', productlist=getproductlist(), takequeries=getuser(email)['to_take'], **kwargs)
-    elif (kwargs['rights'] == 2):
+        return render_template('dashboard.html', productlist=getproductlist(), takequeries=user.data['to_take'], **kwargs)
+    elif (user.data['rights'] == 2):
         balance_q = getquerylist('payment.json')
         balance_requests = []
         for i in balance_q:
@@ -98,7 +95,7 @@ def dashboard():
                 "phone": us['phone'],
                 "grade": us['class']
             })
-        return render_template('dashboard.html', **kwargs, balance_requests=balance_requests, productlist=getproductlist(), globalproductlist=getglobalproductlist())
+        return render_template('dashboard.html', **user.kwargs(), balance_requests=balance_requests, productlist=getproductlist(), globalproductlist=getglobalproductlist())
 
 #start
 if __name__ == '__main__':
