@@ -6,11 +6,7 @@ from subscript.account_system import *
 from subscript.reports import *
 
 def remove_from_modal(day, id):
-    day = int(day)
-    id = int(id)
-    email = getlogin()
-    if email == 'placeholder':
-        return redirect(url_for('dashboard'), 302)
+    user = 
     user_data = getuser(email)
     if not user_data or user_data.get('rights', 0) < 2:
         return redirect(url_for('dashboard'), 302)

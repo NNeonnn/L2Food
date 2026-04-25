@@ -7,35 +7,36 @@ from subscript.password_hashing import *
 from random import randint
 
 def choose():
-    return render_template('choose.html', **commonkwargs(getlogin()))
+    user = User()
+    if (not user.exists()):
+        return render_template('choose.html', **user.kwargs())
+    else:
+        return redirect(url_for('profile'), 302)
 
 def login():
-    email = getlogin()
-    if (email != 'placeholder'):
+    user = User()
+    if (user.exists()):
         return redirect(url_for('profile'), 302)
     if (request.method == 'POST'):
         data = request.form.to_dict(flat=False)
         if len(data['email']) > 0 and len(data['password']) > 0:
             input_email = data['email'][0]
             input_password = data['password'][0]
-            if getuser(input_email) != False and verify_password(getuser(input_email)['password'], input_password):
-                setlogin(input_email)
+            if getuser(input_email) != False and verify_password(User[input_email]['password'], input_password):
+                user.set(input_email)
                 return redirect(url_for('profile'), 302)
             else:
-                # Неверный email или пароль
-                return render_template('login.html', wrong=True, **commonkwargs(email))
+                return render_template('login.html', wrong=True, **user.kwargs())
         else:
-            # Поля не заполнены
-            return render_template('login.html', wrong=True, **commonkwargs(email))
-    return render_template('login.html', wrong=False, **commonkwargs(email))
+            return render_template('login.html', wrong=True, **user.kwargs())
+    return render_template('login.html', wrong=False, **user.kwargs())
 
 def register():
-    email = getlogin()
-    if (email != 'placeholder'):
+    user = User()
+    if (user.exists()):
         return redirect(url_for('profile'), 302)
     if (request.method == 'POST'):
         data = request.form.to_dict(flat=False)
-        # Добавляем поле 'cart': [] при регистрации
         session['temp_email'] = data['email'][0]
         session['temp_password'] = hash_password(data['password'][0])
         session['temp_last_name'] = data.get('last_name', [''])[0].strip()
@@ -45,11 +46,11 @@ def register():
         session['temp_rights'] = data['rights'][0]
         session['auth'] = True
         return redirect(url_for('confirm_mail'), 302)
-    return render_template('register.html', **commonkwargs(email))
+    return render_template('register.html', user.kwargs())
 
-def confirm_mail(): # for registration
-    email = getlogin(reset_auth=False)
-    if (email != 'placeholder' or session['auth'] == False):
+def confirm_mail():
+    user = User(reset_auth = False)
+    if (user.exists() or session['auth'] == False):
         return redirect(url_for('profile'), 302)
     if (request.method == 'GET'):
         code = []
@@ -62,19 +63,16 @@ def confirm_mail(): # for registration
             print(f'Ваш код: {scode}')
         else:
             sendmail(session['temp_email'], scode)
-        return render_template('confirm_mail.html', **commonkwargs(email), redirectto='confirm_mail')
+        return render_template('confirm_mail.html', user.kwargs(), redirectto='confirm_mail')
     if (request.method == 'POST'):
         data = request.form.to_dict(flat=False)
         for i in range(4):
             if session['auth_code'][i] != int(data[f'code{i}'][0]):
                 return redirect(url_for('confirm_mail'), 302)
-        setuser(session['temp_email'], {
+        user.set(session['temp_email'])
+        user.data = {
             'password': session['temp_password'],
-
-            # старое поле для совместимости
             'username': session.get('temp_name', ''),
-
-            # новые поля
             'last_name': session.get('temp_last_name', ''),
             'first_name': session.get('temp_first_name', ''),
             'middle_name': session.get('temp_middle_name', ''),
@@ -85,32 +83,30 @@ def confirm_mail(): # for registration
             'rights': int(session['temp_rights']),
             'cart': [[], [], [], [], [], []],
             'history': []
-        })
-        # session['temp_password'] = False
+        }
+        user.commit()
         session['temp_password'] = ""
-        email = session['temp_email']
-        setlogin(email)
         return redirect(url_for('profile'), 302)
     return redirect(url_for('register'), 302)
 
 def login_wout_pass():
-    email = getlogin(reset_auth=False)
-    if (email != 'placeholder'):
+    user = User()
+    if (user.exists()):
         return redirect(url_for('profile'), 302)
     if (request.method == 'POST'):
         data = request.form.to_dict(flat=False)
         input_email = data['email'][0]
-        if len(data['email']) > 0 and getuser(data['email'][0]) != False:
+        if len(data['email']) > 0 and User(data['email'][0]).exists():
             session['temp_mail'] = input_email
             session['auth'] = True
             return redirect(url_for('confirm_login_mail'), 302)
         else:
-            return render_template('login_wout_pass.html', wrong=True, **commonkwargs(email))
-    return render_template('login_wout_pass.html', wrong=False, **commonkwargs(email))
+            return render_template('login_wout_pass.html', wrong=True, **user.kwargs())
+    return render_template('login_wout_pass.html', wrong=False, **user.kwargs())
 
 def confirm_login_mail():
-    email = getlogin(reset_auth=False)
-    if (email != 'placeholder' or session['auth'] == False):
+    user = User(reset_auth=False)
+    if (user.exists() or session['auth'] == False):
         return redirect(url_for('profile'), 302)
     if (request.method == 'GET'):
         code = []
@@ -120,95 +116,61 @@ def confirm_login_mail():
             scode += str(code[i])
         session['auth_code'] = code
         sendmail(session['temp_mail'], scode)
-        return render_template('confirm_mail.html', **commonkwargs(email), redirectto='confirm_login_mail')
+        return render_template('confirm_mail.html', user.kwargs(), redirectto='confirm_login_mail')
     if (request.method == 'POST'):
         data = request.form.to_dict(flat=False)
         for i in range(4):
             if session['auth_code'][i] != int(data[f'code{i}'][0]):
                 return redirect(url_for('confirm_login_mail'), 302)
-        email = session['temp_mail']
-        setlogin(email)
+        user.set(session['temp_mail'])
         return redirect(url_for('profile'), 302)
     return redirect(url_for('register'), 302)
 
 def profile():
-    email = getlogin()
-    if (email == 'placeholder'):
+    user = User()
+    if (not user.exists()):
         return redirect(url_for('login'), 302)
     if (request.method == 'POST'):
-        data = request.form.to_dict(flat=False)
-
-        # 1. Выход
-        if (data['commit_type'][0] == 'logout'):
-            setlogin('')
+        data = request.form.to_dict()
+        # Выход
+        if (data['commit_type'] == 'logout'):
+            user.set('')
             return redirect(url_for('landing'), 302)
-
-        # 2. Обновление текстовых данных
-
-        if (data['commit_type'][0] == 'update_data'):
-            changes = getuser(email)
-
-            # новые поля ФИО
+        # Обновление информации
+        if (data['commit_type'] == 'update_data'):
+            changes = user.data()
+            for i in data:
+                if len(data[i]) > 0:
+                    changes[i] = data[i].strip()
+            # ФИО
             if 'last_name' in data and len(data['last_name']) > 0:
                 changes['last_name'] = data['last_name'][0].strip()
             if 'first_name' in data and len(data['first_name']) > 0:
                 changes['first_name'] = data['first_name'][0].strip()
             if 'middle_name' in data and len(data['middle_name']) > 0:
                 changes['middle_name'] = data['middle_name'][0].strip()
-
-            # поддержка старого username (склеиваем из новых)
-            ln = changes.get('last_name', '').strip()
-            fn = changes.get('first_name', '').strip()
-            mn = changes.get('middle_name', '').strip()
-            changes['username'] = f"{ln} {fn} {mn}".strip()
-
-            # телефон/описание/класс — как было, но безопасно по ключам
-            if 'phone' in data and len(data['phone']) > 0:
-                changes['phone'] = data['phone'][0]
-            if 'description' in data and len(data['description']) > 0:
-                changes['description'] = data['description'][0]
-            # номер и буква класса (для ученика)
-            if 'class_grade' in data and len(data['class_grade']) > 0:
-                changes['class_grade'] = data['class_grade'][0].strip()
-
-            if 'class_letter' in data and len(data['class_letter']) > 0:
-                changes['class_letter'] = data['class_letter'][0].strip()
-
-            # (опционально) соберём старое поле class для совместимости "7А"
-            cg = str(changes.get('class_grade', '')).strip()
-            cl = str(changes.get('class_letter', '')).strip()
-            changes['class'] = f"{cg}{cl}".strip()
-
-            setuser(email, changes)
-
-    # 3. Обновление фото
-        if (data['commit_type'][0] == 'update_photo'):
+            # Полный ФИО
+            changes['username'] = f"{changes.get('last_name', '')} {changes.get('first_name', '')} {changes.get('middle_name', '')}".strip()
+            # Собирать класс человека
+            changes['class'] = f"{changes.get('class_grade', '')}{changes.get('class_letter', '')}".strip()
+            for i, v in changes:
+                user.data[i] = v
+            user.commit()
+        # Фото
+        if (data['commit_type'] == 'update_photo'):
             if (request.files['avatar'].filename == ''):
-                if (os.path.exists(f"{base_path}/static/images/users/{email}.jpg")):
-                    os.remove(f"{base_path}/static/images/users/{email}.jpg")
+                if (os.path.exists(f"{base_path}/static/images/users/{user.mail}.jpg")):
+                    os.remove(f"{base_path}/static/images/users/{user.mail}.jpg")
             else:
                 photo = request.files['avatar']
                 if (photo.filename != ''):
-                    path = f"{base_path}/static/images/users/{email}.jpg"
+                    path = f"{base_path}/static/images/users/{user.mail}.jpg"
                     photo.save(path)
-
-        # 4. Обновление аллергии
+        # Аллергии
         if (data['commit_type'][0] == 'update_health'):
-            changes = getuser(email)
-            changes['allergies'] = data.get('allergies', [])
-            setuser(email, changes)
-
-    user = getuser(email)  # или как у тебя принято
-    kwargs = commonkwargs(email)
-
-    kwargs['last_name'] = user.get('last_name', '')
-    kwargs['first_name'] = user.get('first_name', '')
-    kwargs['middle_name'] = user.get('middle_name', '')
-    kwargs['class_grade'] = user.get('class_grade', '')
-    kwargs['class_letter'] = user.get('class_letter', '')
-
+            user.data['allergies'] = data.get('allergies', [])
+            user.commit()
     show_corr = False
     if request.method == 'POST':
         show_corr = True
-
-    return render_template('profile.html', **kwargs, show_corr=show_corr)
+    return render_template('profile.html', **user.kwargs(), show_corr=show_corr)

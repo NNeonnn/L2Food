@@ -39,6 +39,10 @@ class User:
             session['user'] = email
             self.__mail = email
             self.data = getuser(email)
+        else:
+            session['user'] = 'placeholder'
+            self.__mail = 'placeholder'
+            self.data = {}
 
     def commit(self):
         if (self.__mail != 'placeholder'):
@@ -58,7 +62,8 @@ class User:
             return ans
         else:
             return {'username': 'Log in', 'userimg': return_image(f'users/{self.__mail}', 'user_placeholder'), \
-                'description': 'empty', 'phone': 'N/A', 'class': 'N/A', 'rights': 0, 'money': 0, 'abonement': 'null'}
+                'description': 'empty', 'phone': 'N/A', 'class': 'N/A', 'class_grade': 1, 'class_letter': 'A', \
+                'rights': 0, 'money': 0, 'abonement': 'null'}
 
 class Student(User):
     def exists(self):

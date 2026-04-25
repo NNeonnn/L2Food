@@ -5,7 +5,6 @@ from subscript.account_system import *
 import subscript.simple_routes as simple_r
 import subscript.account_routes as account_r
 import subscript.student_routes as student_r
-import subscript.product_routes as product_r
 import subscript.admin_routes as admin_r
 import subscript.time_api as time_api
 import os
@@ -51,8 +50,8 @@ app.add_url_rule('/download_product_report', view_func=admin_r.download_product_
 app.add_url_rule('/approve_balance_req/<id>', view_func=admin_r.approve_balance_req)
 app.add_url_rule('/decline_balance_req/<id>', view_func=admin_r.decline_balance_req)
 app.add_url_rule('/download_receipt/<receipt_id>', view_func=admin_r.download_receipt)
-app.add_url_rule('/remove_from_modal/<int:day>/<int:id>', view_func=admin_r.remove_from_modal)
-app.add_url_rule('/add_to_modal/<int:day>/<int:id>', view_func=admin_r.remove_from_modal)
+app.add_url_rule('/remove_from_modal/<int:day>&<int:id>', view_func=admin_r.remove_from_modal)
+app.add_url_rule('/add_to_modal/<int:day>&<int:id>', view_func=admin_r.remove_from_modal)
 
 #@app.errorhandler(404)
 #def four04(error):
