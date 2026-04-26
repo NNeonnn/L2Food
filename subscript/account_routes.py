@@ -96,7 +96,7 @@ def login_wout_pass():
     if (request.method == 'POST'):
         data = request.form.to_dict(flat=False)
         input_email = data['email'][0]
-        if len(data['email']) > 0 and User(data['email'][0]).exists():
+        if len(data['email']) > 0 and User(email=data['email'][0]).exists():
             session['temp_mail'] = input_email
             session['auth'] = True
             return redirect(url_for('confirm_login_mail'), 302)

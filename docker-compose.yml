@@ -1,0 +1,7 @@
+services:
+  web:
+    build: .
+    ports:
+      - "5237:5237"
+    environment:
+      - FLASK_ENV=production
