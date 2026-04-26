@@ -15,17 +15,20 @@ class User:
         if email != '':
             self.__mail = email
             self.data = getuser(email)
-            reset_auth = False
-        if session.get('user', '') == '':
-            session['user'] = 'placeholder'
-            self.__mail = 'placeholder'
-            self.data = {}
-        if (reset_auth):
-            session['auth'] = False
-        if (not does_user_exist(session.get('user', ''))):
-            session['user'] = 'placeholder'
-            self.__mail = 'placeholder'
-            self.data = {}
+        else:
+            if session.get('user', '') == '':
+                session['user'] = 'placeholder'
+                self.__mail = 'placeholder'
+                self.data = {}
+            if (reset_auth):
+                session['auth'] = False
+            if (not does_user_exist(session.get('user', ''))):
+                session['user'] = 'placeholder'
+                self.__mail = 'placeholder'
+                self.data = {}
+            else:
+                self.__mail = session['user']
+                self.data = getuser(session['user'])
 
     def exists(self):
         ans = does_user_exist(self.__mail)
@@ -35,7 +38,7 @@ class User:
         return ans
     
     def set(self, email):
-        if does_user_exist(session.get(email, 'placeholder')):
+        if does_user_exist(email):
             session['user'] = email
             self.__mail = email
             self.data = getuser(email)

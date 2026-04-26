@@ -1,7 +1,25 @@
 services:
+  mongo:
+    image: mongo:7
+    container_name: mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: pass
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    logging:
+      driver: "none"
   web:
     build: .
     ports:
       - "5237:5237"
     environment:
       - FLASK_ENV=production
+      - MONGO_URL=mongodb://user:pass@mongo:27017
+      - MONGO_DB=canteen  
+
+volumes:
+  mongo_data:

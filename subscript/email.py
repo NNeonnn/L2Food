@@ -19,7 +19,8 @@ def getlogin(reset_auth = True):
 
 def sendmail(mail, code):
     if (Debug_mode):
-        print(f"Ваш код: {code}, пришёл на почту {mail}")
+        import logging
+        logging.error(f"Ваш код: {code}, пришёл на почту {mail}")
         return
     fromaddr = "school_dining@mail.ru"
     toaddr = mail

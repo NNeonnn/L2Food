@@ -22,7 +22,7 @@ def login():
         if len(data['email']) > 0 and len(data['password']) > 0:
             input_email = data['email'][0]
             input_password = data['password'][0]
-            if getuser(input_email) != False and verify_password(User(email=input_email)['password'], input_password):
+            if getuser(input_email) != False and verify_password(User(email=data['email'][0]).data['password'], input_password):
                 user.set(input_email)
                 return redirect(url_for('profile'), 302)
             else:
@@ -46,7 +46,7 @@ def register():
         session['temp_rights'] = data['rights'][0]
         session['auth'] = True
         return redirect(url_for('confirm_mail'), 302)
-    return render_template('register.html', user.kwargs())
+    return render_template('register.html', **user.kwargs())
 
 def confirm_mail():
     user = User(reset_auth = False)
@@ -63,12 +63,13 @@ def confirm_mail():
             print(f'Ваш код: {scode}')
         else:
             sendmail(session['temp_email'], scode)
-        return render_template('confirm_mail.html', user.kwargs(), redirectto='confirm_mail')
+        return render_template('confirm_mail.html', **user.kwargs(), redirectto='confirm_mail')
     if (request.method == 'POST'):
         data = request.form.to_dict(flat=False)
         for i in range(4):
             if session['auth_code'][i] != int(data[f'code{i}'][0]):
                 return redirect(url_for('confirm_mail'), 302)
+        setuser(session['temp_email'], {})
         user.set(session['temp_email'])
         user.data = {
             'password': session['temp_password'],
@@ -84,6 +85,7 @@ def confirm_mail():
             'cart': [[], [], [], [], [], []],
             'history': []
         }
+        print(user.mail)
         user.commit()
         session['temp_password'] = ""
         return redirect(url_for('profile'), 302)
@@ -116,7 +118,7 @@ def confirm_login_mail():
             scode += str(code[i])
         session['auth_code'] = code
         sendmail(session['temp_mail'], scode)
-        return render_template('confirm_mail.html', user.kwargs(), redirectto='confirm_login_mail')
+        return render_template('confirm_mail.html', **user.kwargs(), redirectto='confirm_login_mail')
     if (request.method == 'POST'):
         data = request.form.to_dict(flat=False)
         for i in range(4):
@@ -138,23 +140,23 @@ def profile():
             return redirect(url_for('landing'), 302)
         # Обновление информации
         if (data['commit_type'] == 'update_data'):
-            changes = user.data()
+            changes = user.data
             for i in data:
                 if len(data[i]) > 0:
                     changes[i] = data[i].strip()
             # ФИО
             if 'last_name' in data and len(data['last_name']) > 0:
-                changes['last_name'] = data['last_name'][0].strip()
+                changes['last_name'] = data['last_name'].strip()
             if 'first_name' in data and len(data['first_name']) > 0:
-                changes['first_name'] = data['first_name'][0].strip()
+                changes['first_name'] = data['first_name'].strip()
             if 'middle_name' in data and len(data['middle_name']) > 0:
-                changes['middle_name'] = data['middle_name'][0].strip()
+                changes['middle_name'] = data['middle_name'].strip()
             # Полный ФИО
             changes['username'] = f"{changes.get('last_name', '')} {changes.get('first_name', '')} {changes.get('middle_name', '')}".strip()
             # Собирать класс человека
             changes['class'] = f"{changes.get('class_grade', '')}{changes.get('class_letter', '')}".strip()
-            for i, v in changes:
-                user.data[i] = v
+            for i in changes:
+                user.data[i] = changes[i]
             user.commit()
         # Фото
         if (data['commit_type'] == 'update_photo'):

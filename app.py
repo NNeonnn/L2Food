@@ -66,6 +66,11 @@ def store_current_page():
             session['previous_page'] = session.get('now_page', '/dashboard')
             session['now_page'] = request.url
 
+@app.route('/ping')
+def ping():
+    user = User()
+    return "pong", 302
+
 @app.route('/dashboard')
 def dashboard():
     user = User()
@@ -78,7 +83,7 @@ def dashboard():
         kwargs['cart_total'] = cart_total
         kwargs['clmonday'] = time_api.closest_monday()
         kwargs['clsaturday'] = time_api.closest_monday(delta = 5)
-        return render_template('dashboard.html', productlist=getproductlist(), takequeries=user.data['to_take'], **kwargs)
+        return render_template('dashboard.html', productlist=getproductlist(), **kwargs)
     elif (user.data['rights'] == 2):
         balance_q = getquerylist('payment.json')
         balance_requests = []

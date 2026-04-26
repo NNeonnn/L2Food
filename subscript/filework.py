@@ -3,11 +3,16 @@
 import pathlib
 import os
 import json
+import pymongo
 
 base_path = str(pathlib.Path(__file__).parent.resolve())[:-10]
 SESSION_PATH = f'{base_path}/sessions'
-#Осторожно, костыль. [:-10] возвращает корневую папку всего проекта, несмотря на то, что этот файл лежит в папке subscript
-#Возможно есть решение покрасивее. Но это тоже работает.
+MONGO_URL    = os.environ.get("MONGO_URL", "mongodb://user:pass@mongo:27017")
+MONGO_DB     = os.environ.get("MONGO_DB", "canteen")
+
+mongo_client = pymongo.MongoClient(MONGO_URL)
+mongo_db = mongo_client[MONGO_DB]
+users_collection = mongo_db["users"]
 
 def return_image(path, placeholder):
     full_path = f"{base_path}/static/images/{path}.jpg"
@@ -15,18 +20,6 @@ def return_image(path, placeholder):
         return f'images/{path}.jpg'
     else:
         return f'images/common/{placeholder}.jpg'
-
-def getuser(email):
-    users_path = f"{base_path}/users/{email}.json"
-    if os.path.exists(users_path):
-        with open(users_path, 'r', encoding='utf-8') as f:
-            return json.loads(f.read())
-    return False
-
-def setuser(email, changes):
-    users_path = f"{base_path}/users/{email}.json"
-    with open(users_path, 'w', encoding='utf-8') as f:
-        f.write(json.dumps(changes, indent = 4))
 
 def setproduct(id, to):
     lst = getproductlist()
@@ -64,7 +57,27 @@ def setglobalproductlist(to):
     with open(f"{base_path}/products/global.json", 'w', encoding='utf-8') as f:
         f.write(json.dumps(to, indent = 4))
 
-def does_user_exist(email):
-    if os.path.exists(f'{base_path}/users/{email}.json'):
-        return True
-    return False
+def getuser(email: str):
+    #try:
+    doc = users_collection.find_one({"email": email}, {"_id": 0})
+    print(doc)
+    return doc if doc else False
+    #except Exception:
+    #    return False
+
+def setuser(email: str, changes: dict):
+    changes["email"] = email
+    try:
+        users_collection.replace_one(
+            {"email": email},
+            changes,
+            upsert=True
+        )
+    except Exception:
+        pass
+
+def does_user_exist(email: str) -> bool:
+    try:
+        return users_collection.count_documents({"email": email}) > 0
+    except Exception:
+        return False
