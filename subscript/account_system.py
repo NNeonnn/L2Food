@@ -89,18 +89,6 @@ class Admin(User):
             ans = False
         return ans
 
-def getlogin(reset_auth = True):
-    if session.get('user', '') == '':
-        session['user'] = 'placeholder'
-    if (reset_auth):
-        session['auth'] = False
-    if (not does_user_exist(session.get('user', ''))):
-        session['user'] = 'placeholder'
-    return session['user']
-
-def setlogin(email):
-    session['user'] = email
-
 def sendmail(mail, code):
     if (Debug_mode):
         print(f"Ваш код: {code}")

@@ -3,7 +3,6 @@
 import pathlib
 import os
 import json
-from datetime import date, datetime
 
 base_path = str(pathlib.Path(__file__).parent.resolve())[:-10]
 SESSION_PATH = f'{base_path}/sessions'

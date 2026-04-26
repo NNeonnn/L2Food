@@ -22,7 +22,7 @@ def login():
         if len(data['email']) > 0 and len(data['password']) > 0:
             input_email = data['email'][0]
             input_password = data['password'][0]
-            if getuser(input_email) != False and verify_password(User[input_email]['password'], input_password):
+            if getuser(input_email) != False and verify_password(User(email=input_email)['password'], input_password):
                 user.set(input_email)
                 return redirect(url_for('profile'), 302)
             else:
