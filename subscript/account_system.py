@@ -13,81 +13,81 @@ Debug_mode = True #эта переменная при состоянии True в
 class User:
     def __init__(self, email = '', reset_auth = True):
         if email != '':
-            self.__mail = email
+            self._mail = email
             self.data = getuser(email)
         else:
             if session.get('user', '') == '':
                 session['user'] = 'placeholder'
-                self.__mail = 'placeholder'
+                self._mail = 'placeholder'
                 self.data = {}
             if (reset_auth):
                 session['auth'] = False
             if (not does_user_exist(session.get('user', ''))):
                 session['user'] = 'placeholder'
-                self.__mail = 'placeholder'
+                self._mail = 'placeholder'
                 self.data = {}
             else:
-                self.__mail = session['user']
+                self._mail = session['user']
                 self.data = getuser(session['user'])
 
     def exists(self):
-        ans = does_user_exist(self.__mail)
+        ans = does_user_exist(self._mail)
         if (ans == False):
-            self.__mail = 'placeholder'
+            self._mail = 'placeholder'
             self.data = {}
         return ans
     
     def set(self, email):
         if does_user_exist(email):
             session['user'] = email
-            self.__mail = email
+            self._mail = email
             self.data = getuser(email)
         else:
             session['user'] = 'placeholder'
-            self.__mail = 'placeholder'
+            self._mail = 'placeholder'
             self.data = {}
 
     def commit(self):
-        if (self.__mail != 'placeholder'):
-            setuser(self.__mail, self.data)
+        if (self._mail != 'placeholder'):
+            setuser(self._mail, self.data)
     
     @property
     def mail(self):
-        return self.__mail
+        return self._mail
     
     def kwargs(self):
         if (self.exists()):
             ans = dict()
-            ans['userimg'] = return_image(f'users/{self.__mail}', 'user_placeholder')
+            ans['userimg'] = return_image(f'users/{self._mail}', 'user_placeholder')
             for u in self.data:
                 if (u != 'password'):
                     ans[u] = self.data[u]
             return ans
         else:
-            return {'username': 'Log in', 'userimg': return_image(f'users/{self.__mail}', 'user_placeholder'), \
+            return {'username': 'Log in', 'userimg': return_image(f'users/{self._mail}', 'user_placeholder'), \
                 'description': 'empty', 'phone': 'N/A', 'class': 'N/A', 'class_grade': 1, 'class_letter': 'A', \
                 'rights': 0, 'money': 0, 'abonement': 'null'}
 
 class Student(User):
     def exists(self):
-        ans = does_user_exist(self.__mail)
+        ans = does_user_exist(self._mail)
         if (ans == False):
-            self.__mail = 'placeholder'
+            self._mail = 'placeholder'
             self.data = {}
-        if (self.data(self.__mail).get('rights', 2) == 2):
-            self.__mail = 'placeholder'
+        if (self.data.get('rights', 2) == 2):
+            self._mail = 'placeholder'
             self.data = {}
             ans = False
         return ans
 
 class Admin(User):
     def exists(self):
-        ans = does_user_exist(self.__mail)
+        ans = does_user_exist(self._mail)
         if (ans == False):
-            self.__mail = 'placeholder'
+            self._mail = 'placeholder'
             self.data = {}
-        if (self.data(self.__mail).get('rights', 1) == 1):
-            self.__mail = 'placeholder'
+        if (self.data.get('rights', 1) == 1):
+            self._mail = 'placeholder'
             self.data = {}
             ans = False
         return ans

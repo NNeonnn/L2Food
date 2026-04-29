@@ -1,35 +1,16 @@
-#from argon2 import PasswordHasher
-#from argon2.exceptions import VerifyMismatchError
+from argon2 import PasswordHasher
+from argon2.exceptions import VerificationError, InvalidHashError
 
-#ph = PasswordHasher()
-
-#def hash_password(password: str) -> str:
-#    return ph.hash(password);
-
-#def verify_password(stored_hash: str, password: str) -> bool:
-#    try:
-#        ph.verify(stored_hash, password)
-#        return True
-#    except VerifyMismatchError:
-#        return False
+ph = PasswordHasher()
 
 def hash_password(password: str) -> str:
-    return password
+    return ph.hash(password)
 
 def verify_password(stored_hash: str, password: str) -> bool:
-    if (stored_hash == password):
+    try:
+        ph.verify(stored_hash, password)
         return True
-    else:
+    except VerificationError:
         return False
-
-# while (True):
-#     psw = input()
-#     hsh = hash_password(psw)
-#     print("Password:", psw, "Hash:", hsh)
-#     n = int(input())
-#     for i in range(n):
-#         tr = input()
-#         if (verify_password(hsh, tr)):
-#             print("Correct!")
-#         else:
-#             print("Wrong!")
+    except InvalidHashError:
+        return False
