@@ -150,3 +150,6 @@ def pay():
     kwargs['clmonday'] = time_api.closest_monday()
     kwargs['clsaturday'] = time_api.closest_monday(delta = 5)
     return render_template('pay.html', productlist=getproductlist(), **kwargs)
+
+def returnback():
+    return redirect(session.get('previous_page', '/dashboard'))

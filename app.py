@@ -43,6 +43,7 @@ app.add_url_rule('/buy_from_cart', view_func=student_r.buy_from_cart, methods=['
 app.add_url_rule('/remove_from_cart', view_func=student_r.remove_from_cart, methods=['GET'])
 app.add_url_rule('/payment', view_func=student_r.payment, methods=['GET', 'POST'])
 app.add_url_rule('/pay', view_func=student_r.pay, methods=['GET'])
+app.add_url_rule('/returnback', view_func=student_r.returnback, methods=['GET'])
 #admin_routes.py
 app.add_url_rule('/download_student_report', view_func=admin_r.download_student_report)
 app.add_url_rule('/approve_balance_req/<id>', view_func=admin_r.approve_balance_req)

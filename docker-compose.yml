@@ -3,6 +3,7 @@ services:
     image: mongo:7
     container_name: mongodb
     restart: unless-stopped
+    command: mongod --quiet --logpath /dev/null   # ← disables all console logs
     environment:
       MONGO_INITDB_ROOT_USERNAME: user
       MONGO_INITDB_ROOT_PASSWORD: pass
@@ -10,8 +11,6 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-    logging:
-      driver: "none"
   web:
     build: .
     ports:
