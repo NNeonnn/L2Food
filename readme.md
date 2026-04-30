@@ -8,8 +8,7 @@ RU:
 Стек: python, flask, docker, mongoDB (для управления аккаунтами), sqlite (в процессе, в скором времени будет сделан переход на sqlite с json)
 
 Инструкции к установке и запуску:
-- Поставьте интерпретатор Python 3.14.2 и менеджер пакетов pip
 - Установите Docker Engine и docker-compose
-- Запустите контейнер через docker-compose up -d --build
+- Запустите контейнер через docker-compose up --build
 - Откройте [http:](http://127.0.0.1:5237/) в браузере.
-- Чтобы выключить напишите docker-compose down
+- Чтобы выключить напишите docker-compose down или дважды прожмите ctrl + C
