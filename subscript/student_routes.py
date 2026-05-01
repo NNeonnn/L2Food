@@ -116,7 +116,7 @@ def buy_from_cart():
         "date": f'{time_api.closest_monday()} - {time_api.closest_monday(delta=5)}',
         "money": sum
     })
-    user['money'] -= sum
+    user.data['money'] -= sum
     user.commit()
     return redirect(url_for('clear_cart'))
 

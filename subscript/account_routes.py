@@ -168,10 +168,6 @@ def profile():
                 if (photo.filename != ''):
                     path = f"{base_path}/static/images/users/{user.mail}.jpg"
                     photo.save(path)
-        # Аллергии
-        if (data['commit_type'][0] == 'update_health'):
-            user.data['allergies'] = data.get('allergies', [])
-            user.commit()
     show_corr = False
     if request.method == 'POST':
         show_corr = True

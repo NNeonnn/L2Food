@@ -87,29 +87,6 @@
                             {% endfor %}
                         </div>
                     </div>
-
-                    {% if rights == 1 %}
-                    <div class="mb-4">
-                        <span class="filter-group-title">ЗДОРОВЬЕ</span>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="allergyFilter_m" {% if allergies
-                                %}checked{% endif %}>
-                            <label class="form-check-label fw-bold" for="allergyFilter_m">Скрыть аллергены</label>
-                        </div>
-                    </div>
-
-                    <div class="p-3 bg-light rounded-3 border">
-                        <small class="fw-bold text-muted">Ваши аллергены:</small>
-                        <div class="d-flex gap-1 flex-wrap mt-2">
-                            {% if allergies %}{% for alg in allergies %}<span
-                                class="badge bg-danger bg-opacity-10 text-danger border border-danger">{{ alg
-                                }}</span>{% endfor %}{% else %}<span class="text-muted small">Нет данных</span>{% endif
-                            %}
-                        </div>
-                        <a href="{{ url_for('profile') }}"
-                            class="d-block small text-primary text-decoration-none mt-2">Изменить в профиле</a>
-                    </div>
-                    {% endif %}
                 </div>
 
                 <!-- КОРЗИНА (ВАШ ЗАКАЗ) -->
@@ -196,29 +173,6 @@
                                     for="c{{i + 1}}">{{allcategories[i]}}</label></div>
                             {% endfor %}
                         </div>
-
-                        {% if rights == 1 %}
-                        <div class="mb-4">
-                            <span class="filter-group-title">ЗДОРОВЬЕ</span>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="allergyFilter" {% if allergies
-                                    %}checked{% endif %}>
-                                <label class="form-check-label fw-bold" for="allergyFilter">Скрыть аллергены</label>
-                            </div>
-                        </div>
-
-                        <div class="p-3 bg-light rounded-3 border">
-                            <small class="fw-bold text-muted">Ваши аллергены:</small>
-                            <div class="d-flex gap-1 flex-wrap mt-2">
-                                {% if allergies %}{% for alg in allergies %}<span
-                                    class="badge bg-danger bg-opacity-10 text-danger border border-danger">{{ alg
-                                    }}</span>{% endfor %}{% else %}<span class="text-muted small">Нет данных</span>{%
-                                endif %}
-                            </div>
-                            <a href="{{ url_for('profile') }}"
-                                class="d-block small text-primary text-decoration-none mt-2">Изменить в профиле</a>
-                        </div>
-                        {% endif %}
                     </div>
 
                     <!-- КОРЗИНА (десктоп) -->
@@ -321,50 +275,14 @@
                                     <div class="row g-4">
                                         {% for id, item in day_menu.items() %}
                                         {% if item.category == category %}
-                                        {% set ns = namespace(is_dangerous=false, danger_reason="") %}
-                                        {% if allergies and item.allergens %}
-                                        {% for prod_allergen in item.allergens %}
-                                        {% if prod_allergen in allergies %}
-                                        {% set ns.is_dangerous = true %}
-                                        {% set ns.danger_reason = prod_allergen %}
-                                        {% endif %}
-                                        {% endfor %}
-                                        {% endif %}
 
-                                        <div class="col-md-4 col-sm-6 product-item" data-category="{{ item.category }}"
-                                            data-allergen="{{ 'true' if ns.is_dangerous else 'false' }}">
+                                        <div class="col-md-4 col-sm-6 product-item" data-category="{{ item.category }}">
                                             <!-- Полная карточка товара (скопирована из исходного шаблона) -->
                                             <div
                                                 class="product-card h-100 d-flex flex-column position-relative bg-white rounded-4 border overflow-hidden">
-                                                {% if ns.is_dangerous %}
-                                                <div class="position-absolute top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex align-items-center justify-content-center danger-overlay"
-                                                    style="z-index: 10; display: none;">
-                                                    <span class="badge bg-danger fs-6 shadow">
-                                                        <i class="bi bi-exclamation-triangle-fill me-1"></i> Содержит:
-                                                        {{ ns.danger_reason }}
-                                                    </span>
-                                                </div>
-                                                {% endif %}
-
                                                 <div class="p-3 d-flex flex-column flex-grow-1">
                                                     <div class="text-muted small mb-1">{{ item.category }}</div>
                                                     <h6 class="fw-bold mb-2 text-truncate">{{ item.name }} </h6>
-
-                                                    {% if item.allergens %}
-                                                    <div class="mb-2">
-                                                        {% for alg in item.allergens %}
-                                                        {% if alg in allergies %}
-                                                        <span
-                                                            class="badge bg-danger bg-opacity-10 text-danger border border-danger"
-                                                            style="font-size: 0.65rem;">{{ alg }}</span>
-                                                        {% else %}
-                                                        <span class="badge bg-light text-secondary border"
-                                                            style="font-size: 0.65rem;">{{ alg }}</span>
-                                                        {% endif %}
-                                                        {% endfor %}
-                                                    </div>
-                                                    {% endif %}
-
                                                     <div
                                                         class="mt-auto d-flex justify-content-between align-items-center pt-2">
                                                         <span class="fw-bold text-primary fs-5">{{ item.price }}
