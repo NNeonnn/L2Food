@@ -25,6 +25,7 @@ services:
       - FLASK_ENV=production
       - MONGO_URL=mongodb://user:pass@mongo:27017
       - MONGO_DB=canteen
+      - PYTHONUNBUFFERED=1
     depends_on:
       mongo:
         condition: service_healthy

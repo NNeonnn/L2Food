@@ -67,11 +67,6 @@ def store_current_page():
             session['previous_page'] = session.get('now_page', '/dashboard')
             session['now_page'] = request.url
 
-@app.route('/ping')
-def ping():
-    user = User()
-    return "pong", 302
-
 @app.route('/dashboard')
 def dashboard():
     user = User()
@@ -89,16 +84,16 @@ def dashboard():
         balance_q = getquerylist('payment.json')
         balance_requests = []
         for i in balance_q:
-            us = getuser(i['email'])
+            us = User(i['email'])
             balance_requests.append({
                 "approved": i['approved'],
                 "email": i['email'],
-                "name": us['username'],
+                "name": us.data['username'],
                 "amount": i['amount'],
-                "phone": us['phone'],
-                "grade": us['class']
+                "phone": us.data['phone'],
+                "grade": us.data['class']
             })
-        return render_template('dashboard.html', **user.kwargs(), balance_requests=balance_requests, productlist=getproductlist(), globalproductlist=getglobalproductlist())
+        return render_template('dashboard.html', **user.kwargs(), balance_requests=balance_requests, productlist=ModalProductlist().get_all(), globalproductlist=GlobalProductlist().get_all())
 
 #start
 if __name__ == '__main__':

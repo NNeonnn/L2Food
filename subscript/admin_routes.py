@@ -5,16 +5,18 @@ from subscript.filework import *
 from subscript.account_system import *
 from subscript.reports import *
 
-def remove_from_modal(day, id):
+def remove_from_modal(id):
     user = Admin()
     if not user.exists():
         return redirect(url_for('dashboard'), 302)
-    modal = getproductlist()
-    modal[day].pop(str(id))
-    setproductlist(modal)
+    ModalProductlist().erase(id)
     return redirect(url_for('dashboard'), 302)
 
 def add_to_modal(day, id):
+    user = Admin()
+    if not user.exists():
+        return redirect(url_for('dashboard'), 302)
+    ModalProductlist().insert(day, id)
     return redirect(url_for('dashboard'), 302)
 
 def download_receipt(receipt_id):

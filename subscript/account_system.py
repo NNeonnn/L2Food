@@ -4,11 +4,33 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from flask import session
-from subscript.filework import does_user_exist, getuser, setuser, return_image
+from subscript.filework import return_image
+import pymongo
+import os
 
+MONGO_URL    = os.environ.get("MONGO_URL", "mongodb://user:pass@mongo:27017")
+MONGO_DB     = os.environ.get("MONGO_DB", "canteen")
+mongo_client = pymongo.MongoClient(MONGO_URL)
+mongo_db = mongo_client[MONGO_DB]
+users_collection = mongo_db["users"]
 Debug_mode = True #эта переменная при состоянии True вместо отправки кода на почту выводит его в print()
                    #вызвано тем, что слишком много писем с mail.ru почты приводит к блокировке почты из-за спама
                    #(может уже нет, так как я написал в поддержку, но это не факт)
+
+# Не использовать вне этого файла - служебная функция, используйте User.exists()
+def does_user_exist(email: str) -> bool:
+    try:
+        return users_collection.count_documents({"email": email}) > 0
+    except Exception:
+        return False
+
+# Не использовать вне этого файла - служебная функция, используйте User.data
+def getuser(email: str):
+    try:
+        doc = users_collection.find_one({"email": email}, {"_id": 0})
+        return doc if doc else False
+    except Exception:
+        return False
 
 class User:
     def __init__(self, email = '', reset_auth = True):
@@ -49,7 +71,16 @@ class User:
 
     def commit(self):
         if (self._mail != 'placeholder'):
-            setuser(self._mail, self.data)
+            self.data['email'] = self.mail
+            try:
+                users_collection.replace_one({"email": self.mail}, self.data, upsert=True)
+            except:
+                pass
+    
+    def create(self, mail):
+        if User(mail).exists():
+            return
+        users_collection({"email": mail}, {}, upsert=True)
     
     @property
     def mail(self):

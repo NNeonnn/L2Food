@@ -17,9 +17,7 @@ def get_cart_objects(user: User):
         for item_id in cart_ids[day]:
             item = all_products.get_one(day, item_id[0])
             cart_items[day].append([item, item_id[1]])
-            print("ITEM ", item)
             total_price += item['price'] * item_id[1]
-    print(cart_items)
     return cart_items, total_price
 
 def add_to_cart():
@@ -67,46 +65,24 @@ def buy_from_cart():
     user = Student()
     if not user.exists():
         return redirect(url_for('login'))
-    sum = 0
-    dt = getquerylist("global.json")
-    nowid = dt['total_student_queries']
-    dt['total_student_queries'] += 1
-    setquerylist(name="global.json", to=dt)
-    productlist = getproductlist()
+    obj, sum = get_cart_objects(user)
+    if (user.data['money'] < sum):
+        return redirect(url_for('pay'))
+    productlist = ModalProductlist()
     names = [[], [], [], [], [], []]
     for day in range(6):
         for i in user.data['cart'][day]:
             if (i[1] == 1):
-                names[day].append(productlist[day][i[0]]['name'])
-                sum += productlist[day][i[0]]['price']
+                names[day].append(productlist.get_one(day, i[0])['name'])
+                sum += productlist.get_one(day, i[0])['price']
             else:
-                names[day].append(f"{productlist[day][i[0]]['name']} x{i[1]}")
-                sum += productlist[day][i[0]]['price'] * i[1]
+                names[day].append(f"{productlist.get_one(day, i[0])['name']} x{i[1]}")
+                sum += productlist.get_one(day, i[0])['price']
     if (user.data['money'] < sum):
         return redirect(url_for('pay'))
-    qu = getquerylist("student_to_povar.json")
-    for i in range(6):
-        qu.append({
-            "id": nowid,
-            "products": names[i],
-            "name": user.data['username'],
-            "userid": user.mail,
-            "date": f'{time_api.closest_monday(delta=i)}'
-        })
-    setquerylist(name="student_to_povar.json", to=qu)
-    admin_qu = getquerylist('student_buys.json')
-    admin_qu.append({
-        "id": nowid,
-        "user": user.mail,
-        "class": user.data['class'],
-        "phone": user.data['phone'],
-        "money": sum,
-        "what": names,
-        "time": f'{time_api.date()}',
-        "order_date": f'{time_api.date()}',
-        "date": f'{time_api.closest_monday()} - {time_api.closest_monday(delta=5)}',
-    })
-    setquerylist(name="student_buys.json", to=admin_qu)
+    for day in range(6):
+        for i, cnt in user.data['cart'][day]:
+            UserQueries().insert(day, user.mail, i, cnt)
     user.data['history'].append({
         "products": names,
         "time": f'{str(datetime.now())[11:16]}',
@@ -125,15 +101,9 @@ def payment():
     if (request.method == 'POST'):
         photo = request.files['screenshot']
         if (photo.filename != ''):
-            photos = getquerylist('payment.json')
-            path = f"{base_path}/static/images/screenshots/{len(photos)}.jpg"
+            PaymentQueries().insert(user.mail, int(request.form.get('money', 0)))
+            path = f"{base_path}/static/images/screenshots/{PaymentQueries().count()}.jpg"
             photo.save(path)
-            photos.append({
-                "approved": 0,
-                "email": user.mail,
-                "amount": int(request.form.get('money', 0))
-            })
-            setquerylist(name="payment.json", to=photos)
         return redirect(session.get('previous_page', '/dashboard'))
     return render_template('payment.html', **user.kwargs())
 

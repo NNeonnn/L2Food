@@ -6,4 +6,4 @@ RUN pip install -r requirements.txt
 RUN pip install debugpy
 COPY . .
 EXPOSE 5237 5678
-CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "--wait-for-client", "app.py"]
+CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "app.py"]

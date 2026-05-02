@@ -31,3 +31,9 @@ def closest_monday(delta = 0):
     dtn = str(dtn)
     res = f'{dtn[-2:]}.{dtn[-5:-3]}.{dtn[:4]}'
     return res
+
+def day_sicne_epoch(delta = 0):
+    now = datetime.now(timezone.utc)
+    days_since_epoch = now.timestamp() // 86400
+    days_since_epoch += delta
+    return days_since_epoch

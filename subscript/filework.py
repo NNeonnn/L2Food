@@ -3,17 +3,10 @@
 import pathlib
 import os
 import json
-import pymongo
 import sqlite3
 
 base_path = str(pathlib.Path(__file__).parent.resolve())[:-10]
 SESSION_PATH = f'{base_path}/sessions'
-MONGO_URL    = os.environ.get("MONGO_URL", "mongodb://user:pass@mongo:27017")
-MONGO_DB     = os.environ.get("MONGO_DB", "canteen")
-
-mongo_client = pymongo.MongoClient(MONGO_URL)
-mongo_db = mongo_client[MONGO_DB]
-users_collection = mongo_db["users"]
 
 def return_image(path, placeholder):
     full_path = f"{base_path}/static/images/{path}.jpg"
@@ -44,13 +37,25 @@ class SQLInterface:
             for j in range(len(template)):
                 ans[i[0]][template[j]] = i[j + 1]
         return ans
+    def to_arr_of_dicts(self, arr, template):
+        if (len(arr) == 0):
+            return []
+        if (len(arr[0]) != len(template)):
+            raise TypeError("Row length doesn't match template")
+        ans = []
+        for i in arr:
+            ans.append(dict())
+            for j in range(len(template)):
+                ans[-1][template[j]] = i[j]
+        return ans
 
 globalProductlistTemplate = ["name", "category", "price", "description", "source", "volume_of_one"]
+paymentTemplate = ["approved", "email", "amount"]
 
 class GlobalProductlist(SQLInterface):
     def get_all(self):
         query = f"SELECT * FROM Global"
-        return self.to_dict(self.exec(query, args=(), output=True), "")
+        return self.to_dict(self.exec(query, args=(), output=True), globalProductlistTemplate)
     def get_by_id(self, id: int):
         query = f"SELECT * FROM Global WHERE (id = ?)"
         return self.exec(query, args=(id), output=True)
@@ -84,7 +89,20 @@ class ModalProductlist(SQLInterface):
         self.exec(query, args=(id))
 
 class UserQueries(SQLInterface):
-    
+    def insert(self, day, user, id, quanity):
+        query = f"INSERT INTO UserQueries (day, user, menu_id, quanity) VALUES (?, ?, ?, ?)"
+        self.exec(query, args=(day, user, id, quanity))
+
+class PaymentQueries(SQLInterface):
+    def insert(self, user, amount):
+        query = f"INSERT INTO PaymentQueries (email, amount) VALUES (?, ?)"
+        self.exec(query, args=(user, amount))
+    def get_all(self):
+        query = f"SELECT approved, email, amount FROM PaymentQueries"
+        return self.to_arr_of_dicts(self.exec(query, args=(), output=True), paymentTemplate)
+    def count(self):
+        query = f"SELECT COUNT(*) FROM PaymentQueries"
+        return self.exec(query, args=(), output=True)[0][0]
 
 def setproduct(id, to):
     lst = getproductlist()
@@ -121,28 +139,3 @@ def getglobalproductlist():
 def setglobalproductlist(to):
     with open(f"{base_path}/products/global.json", 'w', encoding='utf-8') as f:
         f.write(json.dumps(to, indent = 4))
-
-def getuser(email: str):
-    try:
-        doc = users_collection.find_one({"email": email}, {"_id": 0})
-        print(doc)
-        return doc if doc else False
-    except Exception:
-        return False
-
-def setuser(email: str, changes: dict):
-    changes["email"] = email
-    try:
-        users_collection.replace_one(
-            {"email": email},
-            changes,
-            upsert=True
-        )
-    except Exception:
-        pass
-
-def does_user_exist(email: str) -> bool:
-    try:
-        return users_collection.count_documents({"email": email}) > 0
-    except Exception:
-        return False
