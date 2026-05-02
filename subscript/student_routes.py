@@ -10,18 +10,16 @@ def get_cart_objects(user: User):
     if not user.exists():
         return [[], [], [], [], [], []], 0
     cart_ids = user.data['cart']
-    all_products = getproductlist()
+    all_products = ModalProductlist()
     cart_items = [[], [], [], [], [], []]
     total_price = 0
     for day in range(6):
         for item_id in cart_ids[day]:
-            if item_id[0] in all_products[day]:
-                item = all_products[day][item_id[0]]
-                cart_items[day].append([item, item_id[1]])
-                try:
-                    total_price += int(item['price']) * item_id[1]
-                except:
-                    pass
+            item = all_products.get_one(day, item_id[0])
+            cart_items[day].append([item, item_id[1]])
+            print("ITEM ", item)
+            total_price += item['price'] * item_id[1]
+    print(cart_items)
     return cart_items, total_price
 
 def add_to_cart():
@@ -33,11 +31,11 @@ def add_to_cart():
     if day == -1 or id == -1:
         return redirect(url_for('dashboard'))
     for i in range(len(user.data['cart'][day])):
-        if (user.data['cart'][day][i][0] == str(id)):
+        if (user.data['cart'][day][i][0] == id):
             user.data['cart'][day][i][1] += 1
             user.commit()
             return redirect(url_for('dashboard'))
-    user.data['cart'][day].append([str(id), 1])
+    user.data['cart'][day].append([int(id), 1])
     user.commit()
     return redirect(url_for('dashboard'))
 
@@ -50,7 +48,7 @@ def remove_from_cart():
     if day == -1 or id == -1:
         return redirect(url_for('dashboard'))
     for i in range(len(user.data['cart'][day])):
-        if (user.data['cart'][day][i][0] == str(id)):
+        if (user.data['cart'][day][i][0] == id):
             user.data['cart'][day][i][1] -= 1
             if user.data['cart'][day][i][1] == 0:
                 user.data['cart'][day].remove(user.data['cart'][day][i])

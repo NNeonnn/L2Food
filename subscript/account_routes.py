@@ -85,7 +85,6 @@ def confirm_mail():
             'cart': [[], [], [], [], [], []],
             'history': []
         }
-        print(user.mail)
         user.commit()
         session['temp_password'] = ""
         return redirect(url_for('profile'), 302)

@@ -76,7 +76,7 @@ def ping():
 def dashboard():
     user = User()
     if (not user.exists()):
-        return render_template('dashboard.html', productlist=getproductlist(), **user.kwargs())
+        return render_template('dashboard.html', productlist=ModalProductlist().get_all(), **user.kwargs())
     elif (user.data['rights'] == 1):
         cart_items, cart_total = student_r.get_cart_objects(user)
         kwargs = user.kwargs()
@@ -84,7 +84,7 @@ def dashboard():
         kwargs['cart_total'] = cart_total
         kwargs['clmonday'] = time_api.closest_monday()
         kwargs['clsaturday'] = time_api.closest_monday(delta = 5)
-        return render_template('dashboard.html', productlist=getproductlist(), **kwargs)
+        return render_template('dashboard.html', productlist=ModalProductlist().get_all(), **kwargs)
     elif (user.data['rights'] == 2):
         balance_q = getquerylist('payment.json')
         balance_requests = []
@@ -102,4 +102,4 @@ def dashboard():
 
 #start
 if __name__ == '__main__':
-    app.run(port=5237, host="0.0.0.0", debug=True)
+    app.run(port=5237, host="0.0.0.0", debug=False, use_reloader=False)
