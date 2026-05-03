@@ -46,9 +46,9 @@ app.add_url_rule('/pay', view_func=student_r.pay, methods=['GET'])
 app.add_url_rule('/returnback', view_func=student_r.returnback, methods=['GET'])
 #admin_routes.py
 app.add_url_rule('/download_student_report', view_func=admin_r.download_student_report)
-app.add_url_rule('/approve_balance_req/<id>', view_func=admin_r.approve_balance_req)
-app.add_url_rule('/decline_balance_req/<id>', view_func=admin_r.decline_balance_req)
-app.add_url_rule('/download_receipt/<receipt_id>', view_func=admin_r.download_receipt)
+app.add_url_rule('/approve_balance_req/<int:id>', view_func=admin_r.approve_balance_req)
+app.add_url_rule('/decline_balance_req/<int:id>', view_func=admin_r.decline_balance_req)
+app.add_url_rule('/download_receipt/<int:receipt_id>', view_func=admin_r.download_receipt)
 app.add_url_rule('/remove_from_modal/<int:day>&<int:id>', view_func=admin_r.remove_from_modal)
 app.add_url_rule('/add_to_modal/<int:day>&<int:id>', view_func=admin_r.remove_from_modal)
 
@@ -81,10 +81,12 @@ def dashboard():
         kwargs['clsaturday'] = time_api.closest_monday(delta = 5)
         return render_template('dashboard.html', productlist=ModalProductlist().get_all(), **kwargs)
     elif (user.data['rights'] == 2):
-        balance_q = getquerylist('payment.json')
+        balance_q = PaymentQueries().get_all()
         balance_requests = []
         for i in balance_q:
             us = User(i['email'])
+            if not us.exists():
+                continue
             balance_requests.append({
                 "approved": i['approved'],
                 "email": i['email'],

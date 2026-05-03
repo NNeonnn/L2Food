@@ -2,3 +2,4 @@ sessions
 subscript/__pycache__
 .venv
 personal
+mongo_data

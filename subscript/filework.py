@@ -17,7 +17,7 @@ def return_image(path, placeholder):
 
 class SQLInterface:
     def exec(self, query: str, args=(), output: bool = False):
-        db = sqlite3.connect(base_path + '/products/database.db')
+        db = sqlite3.connect(base_path + '/database.db')
         cursor = db.cursor()
         cursor.execute(query, args)
         if (output):
@@ -97,45 +97,15 @@ class PaymentQueries(SQLInterface):
     def insert(self, user, amount):
         query = f"INSERT INTO PaymentQueries (email, amount) VALUES (?, ?)"
         self.exec(query, args=(user, amount))
+    def set_approval(self, id, approve):
+        query = f"UPDATE PaymentQueries SET approved = ? WHERE id = ?"
+        self.exec(query, args=(approve, id))
+    def get_one(self, id):
+        query = f"SELECT * FROM PaymentQueries WHERE id = ?"
+        return self.to_dict(self.exec(query, args=(id,), output=True), paymentTemplate)
     def get_all(self):
-        query = f"SELECT approved, email, amount FROM PaymentQueries"
+        query = f"SELECT approved, email, amount FROM PaymentQueries ORDER BY id"
         return self.to_arr_of_dicts(self.exec(query, args=(), output=True), paymentTemplate)
     def count(self):
         query = f"SELECT COUNT(*) FROM PaymentQueries"
         return self.exec(query, args=(), output=True)[0][0]
-
-def setproduct(id, to):
-    lst = getproductlist()
-    lst[id] = to
-    setproductlist(lst)
-
-def getproduct(id):
-    return getproductlist()[id]
-
-def setquerylist(name, to):
-    users_path = f"{base_path}/queries/{name}"
-    with open(users_path, 'w', encoding='utf-8') as f:
-        f.write(json.dumps(to, indent = 4))
-
-def getquerylist(name):
-    products_path = f"{base_path}/queries/{name}"
-    if os.path.exists(products_path):
-        with open(products_path, 'r', encoding='utf-8') as f:
-            return json.loads(f.read())
-    return False
-
-def getproductlist():
-    with open(f"{base_path}/products/modal.json", 'r', encoding='utf-8') as f:
-        return json.loads(f.read())
-
-def setproductlist(to):
-    with open(f"{base_path}/products/modal.json", 'w', encoding='utf-8') as f:
-        f.write(json.dumps(to, indent = 4))
-
-def getglobalproductlist():
-    with open(f"{base_path}/products/global.json", 'r', encoding='utf-8') as f:
-        return json.loads(f.read())
-
-def setglobalproductlist(to):
-    with open(f"{base_path}/products/global.json", 'w', encoding='utf-8') as f:
-        f.write(json.dumps(to, indent = 4))

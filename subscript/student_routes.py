@@ -101,6 +101,7 @@ def payment():
     if (request.method == 'POST'):
         photo = request.files['screenshot']
         if (photo.filename != ''):
+            print(f"{base_path}/static/images/screenshots/{PaymentQueries().count()}.jpg")
             PaymentQueries().insert(user.mail, int(request.form.get('money', 0)))
             path = f"{base_path}/static/images/screenshots/{PaymentQueries().count()}.jpg"
             photo.save(path)

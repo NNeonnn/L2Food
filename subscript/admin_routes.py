@@ -19,10 +19,11 @@ def add_to_modal(day, id):
     ModalProductlist().insert(day, id)
     return redirect(url_for('dashboard'), 302)
 
-def download_receipt(receipt_id):
+def download_receipt(receipt_id: int):
     user = Admin()
     if not user.exists():
         return redirect(url_for('dashboard'), 302)
+    receipt_id = receipt_id + 1
     base_dir = os.path.join('static', 'images', 'screenshots')
     for ext in ['jpg', 'pdf']:
         file_path = os.path.join(base_dir, f'{receipt_id}.{ext}')
@@ -50,27 +51,24 @@ def download_student_report():
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
 
-def approve_balance_req(id):
+def approve_balance_req(id: int):
     user = Admin()
     if not user.exists():
         return redirect(url_for('dashboard'), 302)
-    qu = getquerylist("payment.json")
-    id = int(id)
-    if (id < len(qu)):
-        qu[id]['approved'] = 1
-        us = getuser(qu[id]['email'])
-        us['money'] += qu[id]['amount']
-        setuser(qu[id]['email'], us)
-    setquerylist(name="payment.json", to=qu)
+    qu = PaymentQueries()
+    if (id < qu.count()):
+        qu.set_approval(id, 1)
+        req = qu.get_one(id)[id]
+        us = User(req['email'])
+        us.data['money'] += req['amount']
+        us.commit()
     return redirect(url_for('dashboard'), 302)
 
-def decline_balance_req(id):
+def decline_balance_req(id: int):
     user = Admin()
     if not user.exists():
         return redirect(url_for('dashboard'), 302)
-    qu = getquerylist("payment.json")
-    id = int(id)
-    if (id < len(qu)):
-        qu[id]['approved'] = -1
-    setquerylist(name="payment.json", to=qu)
+    qu = PaymentQueries()
+    if (id < qu.count()):
+        qu.set_approval(id, -1)
     return redirect(url_for('dashboard'), 302)

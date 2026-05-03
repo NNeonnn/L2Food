@@ -80,7 +80,7 @@ class User:
     def create(self, mail):
         if User(mail).exists():
             return
-        users_collection({"email": mail}, {}, upsert=True)
+        users_collection.insert_one({"email": mail})
     
     @property
     def mail(self):

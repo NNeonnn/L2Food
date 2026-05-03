@@ -69,7 +69,7 @@ def confirm_mail():
         for i in range(4):
             if session['auth_code'][i] != int(data[f'code{i}'][0]):
                 return redirect(url_for('confirm_mail'), 302)
-        user.create(session['temp_email'], {})
+        user.create(session['temp_email'])
         user.set(session['temp_email'])
         user.data = {
             'password': session['temp_password'],
