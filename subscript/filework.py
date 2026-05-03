@@ -58,16 +58,16 @@ class GlobalProductlist(SQLInterface):
         return self.to_dict(self.exec(query, args=(), output=True), globalProductlistTemplate)
     def get_by_id(self, id: int):
         query = f"SELECT * FROM Global WHERE (id = ?)"
-        return self.exec(query, args=(id), output=True)
+        return self.exec(query, args=(id,), output=True)
     def insert(self, name: str, category: str, price: int, description: str, source: int):
         query = f"INSERT INTO Global (name, category, price, description, source) VALUES (?, ?, ?, ?, ?)"
         self.exec(query, args=(name, price, description, source))
     def erase(self, id: int): 
         query = f"DELETE FROM Global WHERE id = ?"
-        self.exec(query, args=(id))
+        self.exec(query, args=(id,))
     def erase_source(self, src: int):
         query = f"DELETE FROM Global WHERE source = ?"
-        self.exec(query, args=(src))
+        self.exec(query, args=(src,))
 
 class ModalProductlist(SQLInterface):
     def get_all(self):
@@ -85,8 +85,8 @@ class ModalProductlist(SQLInterface):
         query = f"INSERT INTO Modal (global_id, day) VALUES (?, ?)"
         self.exec(query, args=(global_id, day))
     def erase(self, id: int): 
-        query = f"DELETE FROM Modal WHERE id = ?"
-        self.exec(query, args=(id))
+        query = f"DELETE FROM Modal WHERE modal_id = ?"
+        self.exec(query, args=(id,))
 
 class UserQueries(SQLInterface):
     def insert(self, day, user, id, quanity):

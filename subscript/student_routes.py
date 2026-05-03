@@ -74,12 +74,8 @@ def buy_from_cart():
         for i in user.data['cart'][day]:
             if (i[1] == 1):
                 names[day].append(productlist.get_one(day, i[0])['name'])
-                sum += productlist.get_one(day, i[0])['price']
             else:
                 names[day].append(f"{productlist.get_one(day, i[0])['name']} x{i[1]}")
-                sum += productlist.get_one(day, i[0])['price']
-    if (user.data['money'] < sum):
-        return redirect(url_for('pay'))
     for day in range(6):
         for i, cnt in user.data['cart'][day]:
             UserQueries().insert(day, user.mail, i, cnt)
@@ -118,7 +114,7 @@ def pay():
     kwargs['cart_total'] = cart_total
     kwargs['clmonday'] = time_api.closest_monday()
     kwargs['clsaturday'] = time_api.closest_monday(delta = 5)
-    return render_template('pay.html', productlist=getproductlist(), **kwargs)
+    return render_template('pay.html', productlist=ModalProductlist().get_all(), **kwargs)
 
 def returnback():
     return redirect(session.get('previous_page', '/dashboard'))

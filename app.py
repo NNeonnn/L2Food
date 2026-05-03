@@ -49,8 +49,8 @@ app.add_url_rule('/download_student_report', view_func=admin_r.download_student_
 app.add_url_rule('/approve_balance_req/<int:id>', view_func=admin_r.approve_balance_req)
 app.add_url_rule('/decline_balance_req/<int:id>', view_func=admin_r.decline_balance_req)
 app.add_url_rule('/download_receipt/<int:receipt_id>', view_func=admin_r.download_receipt)
-app.add_url_rule('/remove_from_modal/<int:day>&<int:id>', view_func=admin_r.remove_from_modal)
-app.add_url_rule('/add_to_modal/<int:day>&<int:id>', view_func=admin_r.remove_from_modal)
+app.add_url_rule('/remove_from_modal/<int:id>', view_func=admin_r.remove_from_modal)
+app.add_url_rule('/add_to_modal/<int:day>&<int:id>', view_func=admin_r.add_to_modal)
 
 #@app.errorhandler(404)
 #def four04(error):
@@ -95,6 +95,7 @@ def dashboard():
                 "phone": us.data['phone'],
                 "grade": us.data['class']
             })
+        G = GlobalProductlist().get_all()
         return render_template('dashboard.html', **user.kwargs(), balance_requests=balance_requests, productlist=ModalProductlist().get_all(), globalproductlist=GlobalProductlist().get_all())
 
 #start
